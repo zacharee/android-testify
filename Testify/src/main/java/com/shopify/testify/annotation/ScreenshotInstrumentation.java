@@ -1,4 +1,4 @@
-package com.shopify.testify;
+package com.shopify.testify.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

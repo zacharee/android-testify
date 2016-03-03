@@ -68,13 +68,13 @@ task recordMode(type: DefaultTask, group: "Verification", description: "Enable r
     }
 }
 
-task pullScreenshots(type: DefaultTask) {
+task pullScreenshots(type: DefaultTask, group: "Verification") {
     doLast {
         pullScreenshots();
     }
 }
 
-task clearScreenshots(type: DefaultTask) {
+task clearScreenshots(type: DefaultTask, group: "Verification") {
     doLast {
         def command = [getAdbPath(), '-e', 'shell', 'rm', getDeviceImageDirectory() + "*.png"]
         def process = command.execute()

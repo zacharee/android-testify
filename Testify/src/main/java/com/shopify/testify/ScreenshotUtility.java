@@ -2,7 +2,6 @@ package com.shopify.testify;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+
+import com.shopify.testify.exception.ScreenshotDirectoryNotFoundException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,27 +31,6 @@ public class ScreenshotUtility {
     private static final String PNG_EXTENSION = ".png";
     private static final String DESTINATION_DIR = "/images/";
     private static final String SOURCE_DIR = "screenshots/";
-
-    // TODO: 100% this needs to be fixed
-    private static final String TEST_PACKAGE = "com.shopify.testify.test";
-
-//    /**
-//     * Creates a context that's guaranteed to point to the test package. Allows us to fetch
-//     * assets from the androidTest folder.
-//     *
-//     * @param context
-//     * @return
-//     * @throws PackageManager.NameNotFoundException
-//     */
-//    @NonNull
-//    protected Context createTestContext(@NonNull Context context) throws PackageManager.NameNotFoundException {
-//
-//        String n = context.getPackageName();
-//        String p = context.getPackageCodePath();
-//        String r = context.getPackageResourcePath();
-//
-//        return context.createPackageContext(TEST_PACKAGE, Context.CONTEXT_IGNORE_SECURITY);
-//    }
 
     protected Bitmap createBitmapFromView(@NonNull final Activity activity, @Nullable final View targetView) {
         View v = targetView;

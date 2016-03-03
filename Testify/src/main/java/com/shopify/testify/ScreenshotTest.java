@@ -8,6 +8,9 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.action.ViewActions;
 import android.view.ViewGroup;
 
+import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
+import com.shopify.testify.exception.ScreenshotIsDifferentException;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -22,11 +25,11 @@ import static junit.framework.Assert.assertTrue;
  */
 public class ScreenshotTest {
 
+    private static final long INFLATE_TIMEOUT_SECONDS = 5;
     private ViewModification viewModification;
     private EspressoActions espressoActions;
     private ScreenshotTestCase testCase;
-    private
-    @LayoutRes int layoutId;
+    @LayoutRes private int layoutId;
     private boolean hideSoftKeyboard = true;
 
     public ScreenshotTest(ScreenshotTestCase testCase, @LayoutRes int layoutId) {
@@ -76,7 +79,7 @@ public class ScreenshotTest {
             }
         });
 
-        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(INFLATE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         if (espressoActions != null) {
             espressoActions.performEspressoActions();
@@ -94,7 +97,7 @@ public class ScreenshotTest {
 
         Bitmap baselineBitmap = screenshotUtility.loadBaselineBitmapForComparison(getTestContext(), testName);
         if (baselineBitmap == null) {
-            throw new ScreenshotBaselineNotDefined(testName);
+            throw new ScreenshotBaselineNotDefinedException(testName);
         }
 
         if (screenshotUtility.compareBitmaps(baselineBitmap, currentBitmap)) {

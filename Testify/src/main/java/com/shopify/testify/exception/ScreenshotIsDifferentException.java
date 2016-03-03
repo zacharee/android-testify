@@ -1,4 +1,4 @@
-package com.shopify.testify;
+package com.shopify.testify.exception;
 
 /**
  * Created by danieljette on 15-12-09.
