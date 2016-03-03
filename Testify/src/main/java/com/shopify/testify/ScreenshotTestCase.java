@@ -38,9 +38,9 @@ public class ScreenshotTestCase<T extends Activity> extends ActivityInstrumentat
     protected void setUp() throws Exception {
         super.setUp();
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            throw new Exception("\n * Screenshot testing does not support Android 6+, API 23 (Marshmallow).\n");
-        }
+//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            throw new Exception("\n * Screenshot testing does not support Android 6+, API 23 (Marshmallow).\n");
+//        }
 
         initMockito(getInstrumentation().getTargetContext());
     }

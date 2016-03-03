@@ -10,8 +10,10 @@ private String getAdbPath() {
 }
 
 private String getDeviceImageDirectory() {
-    final String sdCardName = "sdcard"; // TODO: make this configurable
-    return "/storage/" + sdCardName + "/com.shopify.testify.test/images/";
+//    final String sdCardName = "sdcard"; // TODO: make this configurable
+//    return "/storage/" + sdCardName + "/com.shopify.testify.test/images/";
+
+    return "/data/data/com.shopify.testify.test/app_images/"
 }
 
 private String getLocalImageDirectory() {
@@ -82,7 +84,8 @@ task clearScreenshots(type: DefaultTask, group: "Verification") {
     }
 }
 
-task screenshotTest(type: DefaultTask, dependsOn: "connectedAndroidTest", group: "Verification", description: "Run the Android screenshot tests") {
+task screenshotTest(type: DefaultTask, dependsOn: ["grantScreenshotPermission", "connectedAndroidTest"], group: "Verification", description: "Run the Android screenshot tests") {
+
     /*
     `screenshotTest` should perform the actions that are currently being run by the `TaskActionListener` below.
     However, I could not get the task ordering right. `screenshotTest` must depend on `connectedAndroidTest` but `connectedAndroidTest` is guaranteed to have

@@ -1,13 +1,15 @@
 package com.shopify.testify;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
@@ -29,7 +31,7 @@ public class ScreenshotUtility {
 
     private static final String LOG_TAG = ScreenshotUtility.class.getSimpleName();
     private static final String PNG_EXTENSION = ".png";
-    private static final String DESTINATION_DIR = "/images/";
+    private static final String DESTINATION_DIR = "images";
     private static final String SOURCE_DIR = "screenshots/";
 
     protected Bitmap createBitmapFromView(@NonNull final Activity activity, @Nullable final View targetView) {
@@ -58,7 +60,7 @@ public class ScreenshotUtility {
 
     protected boolean assureScreenshotDirectory(@NonNull Context context) {
         boolean created = true;
-        final File outputDirectory = getOutputDirectoryPath(context);
+        File outputDirectory = getOutputDirectoryPath(context);
         if (!outputDirectory.exists()) {
             created = outputDirectory.mkdirs();
         }
@@ -67,8 +69,7 @@ public class ScreenshotUtility {
 
     @NonNull
     protected File getOutputDirectoryPath(@NonNull Context context) {
-        final File extStore = Environment.getExternalStorageDirectory();
-        return new File(extStore.getPath() + "/" + context.getApplicationContext().getPackageName() + DESTINATION_DIR);
+        return context.getDir(DESTINATION_DIR, Context.MODE_PRIVATE);
     }
 
     protected String getOutputFilePath(@NonNull final Context context, final String fileName) {
