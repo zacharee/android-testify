@@ -1,0 +1,109 @@
+/**
+ * Created by danieljette on 15-11-25.
+ * Copyright © 2015 Shopify. All rights reserved.
+ */
+
+boolean isRecordMode = false;
+
+private String getAdbPath() {
+    return project.android.getAdbExe().toString();
+}
+
+private String getDeviceImageDirectory() {
+    final String sdCardName = "sdcard"; // TODO: make this configurable
+    return "/storage/" + sdCardName + "/com.shopify.testify.test/images/";
+}
+
+private String getLocalImageDirectory() {
+    return "./src/androidTest/assets/screenshots/" + getDeviceKey();
+}
+
+private void assureScreenshotDirectory() {
+    File directory = new File(getLocalImageDirectory());
+    if (!directory.exists()) {
+        directory.mkdirs();
+    }
+}
+
+private void pullScreenshots() {
+
+    assureScreenshotDirectory();
+
+    // TODO: make this configurable
+    def command = [getAdbPath(), "-e", 'pull', getDeviceImageDirectory(), getLocalImageDirectory()]
+    command.execute()
+}
+
+private String getDeviceKey() {
+
+    def versionLine = new ByteArrayOutputStream()
+    exec {
+        executable(getAdbPath())
+        args(['-e', 'shell', 'getprop', 'ro.build.version.sdk'])
+        standardOutput = versionLine
+    }
+    String version = versionLine.toString().trim();
+
+    def densityLine = new ByteArrayOutputStream()
+    exec {
+        executable(getAdbPath())
+        args(['-e', 'shell', 'wm', 'density'])
+        standardOutput = densityLine;
+    }
+    String density = densityLine.toString().substring("Physical density: ".length()).trim();
+
+    def sizeLine = new ByteArrayOutputStream()
+    exec {
+        executable(getAdbPath())
+        args(['-e', 'shell', 'wm', 'size'])
+        standardOutput = sizeLine;
+    }
+    String size = sizeLine.toString().substring("Physical size: ".length()).trim();
+    return version + "-" + size + "@" + density + "dp";
+}
+
+task recordMode(type: DefaultTask, group: "Verification", description: "Enable recording of the baseline images for Android screenshot tests") {
+    doFirst {
+        isRecordMode = true;
+    }
+}
+
+task pullScreenshots(type: DefaultTask) {
+    doLast {
+        pullScreenshots();
+    }
+}
+
+task clearScreenshots(type: DefaultTask) {
+    doLast {
+        def command = [getAdbPath(), '-e', 'shell', 'rm', getDeviceImageDirectory() + "*.png"]
+        def process = command.execute()
+        process.in.eachLine { line -> println line }
+    }
+}
+
+task screenshotTest(type: DefaultTask, dependsOn: "connectedAndroidTest", group: "Verification", description: "Run the Android screenshot tests") {
+    /*
+    `screenshotTest` should perform the actions that are currently being run by the `TaskActionListener` below.
+    However, I could not get the task ordering right. `screenshotTest` must depend on `connectedAndroidTest` but `connectedAndroidTest` is guaranteed to have
+    failing tests when you're running `recordMode` (they fail because you need to update the screenshot!). And, gradle defaults to aborting the task
+    sequence on failing tests. So, the body of `screenshotTest` is never called. I wanted to set `ignoreFailures = true`, but that didn't work either.
+    If I set this in a doFirst{} or doLast{} block, it doesn't take effect. If I set it in the body, it sets it for every task, every time.
+
+        project.gradle.taskGraph.whenReady {
+            connectedDebugAndroidTest {
+                ignoreFailures = true
+            }
+        }
+     */
+}
+
+gradle.addListener(new TaskActionListener() {
+    void beforeActions(Task task) {}
+
+    void afterActions(Task task) {
+        if (isRecordMode && (task.name == "connectedDebugAndroidTest") && task.didWork) {
+            pullScreenshots();
+        }
+    }
+})
