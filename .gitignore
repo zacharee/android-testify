@@ -1,0 +1,5 @@
+.DS_store
+.gradle/
+.idea/
+build/
+android-testify.iml
