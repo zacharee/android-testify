@@ -1,5 +1,23 @@
 # android-testify
 
-1. Requires you add TestHarnessActivity to your manifest
-2. `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`
-3. apply from: 'screenshot.gradle'
+Requires you add TestHarnessActivity to your manifest
+
+`<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`
+
+apply from: 'screenshot.gradle'
+
+
+Add to your build.gradle:
+
+```
+    compile project(':testify')
+    androidTestCompile project(':testify')
+    androidTestCompile "com.android.support:support-annotations:23.1.1"
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+```
+
+```
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+```
