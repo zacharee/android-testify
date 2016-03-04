@@ -1,11 +1,38 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Shopify Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package com.shopify.testify;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.action.ViewActions;
+import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
@@ -15,24 +42,25 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * Created by danieljette on 15-12-16.
- * Copyright © 2015 Shopify. All rights reserved.
- */
+@SuppressWarnings("unused")
 public class ScreenshotTest {
 
+    private static final int NO_ID = -1;
     private static final long INFLATE_TIMEOUT_SECONDS = 5;
     private ViewModification viewModification;
     private EspressoActions espressoActions;
-    private ScreenshotTestCase testCase;
+    private ActivityInstrumentationTestCase2 testCase;
     @LayoutRes private int layoutId;
     private boolean hideSoftKeyboard = true;
 
-    public ScreenshotTest(ScreenshotTestCase testCase, @LayoutRes int layoutId) {
+    public ScreenshotTest(ActivityInstrumentationTestCase2 testCase) {
+        this(testCase, NO_ID);
+    }
+
+    public ScreenshotTest(ActivityInstrumentationTestCase2 testCase, @LayoutRes int layoutId) {
         this.testCase = testCase;
         this.layoutId = layoutId;
     }
@@ -60,37 +88,53 @@ public class ScreenshotTest {
         return this;
     }
 
-    public void assertSame() throws Exception {
+    @IdRes
+    private int getRootViewId() {
+        if ((testCase instanceof ScreenshotTestCase) && (((ScreenshotTestCase) testCase).getRootViewId() != View.NO_ID)) {
+            return ((ScreenshotTestCase) testCase).getRootViewId();
+        } else {
+            return android.R.id.content;
+        }
+    }
 
-        assertNotNull("You must specify an instrumentation test case.\n\n * Call ScreenshotAssert.instrumentation(this);\n", testCase);
-        assertFalse("You must provide a layoutId.\n\n * Call ScreenshotAssert.layoutId(R.layout.test);\n", layoutId == 0);
+    private ViewGroup getRootView(Activity activity) {
+        return (ViewGroup) activity.findViewById(getRootViewId());
+    }
 
-        final Activity activity = testCase.getActivity();
-        final ViewGroup parentView = (ViewGroup) activity.findViewById(testCase.rootViewId);
+    private void initializeView(final Activity activity) throws Exception {
+        final ViewGroup parentView = getRootView(activity);
         final CountDownLatch latch = new CountDownLatch(1);
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                activity.getLayoutInflater().inflate(layoutId, parentView, true);
+                if (layoutId != NO_ID) {
+                    activity.getLayoutInflater().inflate(layoutId, parentView, true);
+                }
                 if (viewModification != null) {
                     viewModification.modifyView(parentView);
                 }
                 latch.countDown();
             }
         });
-
         assertTrue(latch.await(INFLATE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+    }
+
+    public void assertSame() throws Exception {
+
+        assertNotNull("You must specify an instrumentation test case.\n\n * Call ScreenshotAssert.instrumentation(this);\n", testCase);
+
+        final Activity activity = testCase.getActivity();
+        initializeView(activity);
 
         if (espressoActions != null) {
             espressoActions.performEspressoActions();
         }
 
         if (hideSoftKeyboard) {
-            Espresso.onView(withId(testCase.rootViewId)).perform(ViewActions.closeSoftKeyboard());
+            Espresso.onView(withId(getRootViewId())).perform(ViewActions.closeSoftKeyboard());
         }
 
         final String testName = getTestName();
-
         final ScreenshotUtility screenshotUtility = new ScreenshotUtility();
         Bitmap currentBitmap = screenshotUtility.createBitmapFromActivity(activity, testName);
         assertNotNull("Failed to capture bitmap from activity", currentBitmap);
