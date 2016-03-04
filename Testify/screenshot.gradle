@@ -64,7 +64,7 @@ private String getDeviceKey() {
     return version + "-" + size + "@" + density + "dp";
 }
 
-task recordMode(type: DefaultTask, group: "Verification", description: "Enable recording of the baseline images for Android screenshot tests") {
+task recordMode(type: DefaultTask, group: "Screenshot", description: "Enable recording of the baseline images for Android screenshot tests") {
     doFirst {
         isRecordMode = true;
     }
@@ -76,7 +76,7 @@ task pullScreenshots(type: DefaultTask, group: "Verification") {
     }
 }
 
-task clearScreenshots(type: DefaultTask, group: "Verification") {
+task clearScreenshots(type: DefaultTask, group: "Screenshot") {
     doLast {
         def command = [getAdbPath(), '-e', 'shell', 'rm', getDeviceImageDirectory() + "*.png"]
         def process = command.execute()
@@ -84,7 +84,7 @@ task clearScreenshots(type: DefaultTask, group: "Verification") {
     }
 }
 
-task screenshotTest(type: DefaultTask, dependsOn: ["grantScreenshotPermission", "connectedAndroidTest"], group: "Verification", description: "Run the Android screenshot tests") {
+task screenshotTest(type: DefaultTask, dependsOn: ["connectedAndroidTest"], group: "Screenshot", description: "Run the Android screenshot tests") {
 
     /*
     `screenshotTest` should perform the actions that are currently being run by the `TaskActionListener` below.
