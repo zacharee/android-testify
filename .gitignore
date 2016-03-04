@@ -5,3 +5,4 @@ build/
 android-testify.iml
 shopify-native
 *.iml
+local.properties

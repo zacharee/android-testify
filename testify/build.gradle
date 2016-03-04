@@ -1,6 +1,11 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
-def VERSION_NAME = '0.0.1'
+def VERSION_NAME = '0.0.2'
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -16,6 +21,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.aar')) {
+                def fileName = "${archivesBaseName}-${version}.aar"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 }
@@ -35,13 +49,6 @@ dependencies {
 
     compile 'com.android.support.test.espresso:espresso-core:2.2.1'
 
-//    androidTestCompile "com.android.support:appcompat-v7:$supportVersion"
-//    androidTestCompile "com.android.support:design:$supportVersion"
-//    androidTestCompile "com.android.support:support-annotations:$supportVersion"
-//    androidTestCompile "com.android.support:support-v4:$supportVersion"
-//    androidTestCompile "com.android.support:cardview-v7:$supportVersion"
-//    androidTestCompile "com.android.support:customtabs:$supportVersion"
-
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile "com.android.support:support-annotations:$supportVersion"
@@ -54,42 +61,168 @@ dependencies {
 
 apply from: 'screenshot.gradle'
 
-//sourceSets {
-//    javadoc {
-//        java.srcDirs = ['src/main/java']
-//    }
-//}
-//
-//task javadoc(type: Javadoc) {
-//    source = sourceSets.javadoc.allSource
-//    title = "Android Testify"
-//
-////    exclude('**/internal/**')
-////    exclude('**/ui/ProductDetailsImageAreaTouchHandler.java')
-////    exclude('**/ui/ProductDetailsListener.java')
-////    exclude('**/ui/ProductVariantOptionView.java')
-////    exclude('**/ui/ProductImagePagerAdapter.java')
-////    exclude('**/ui/ScrollFlingGestureListener.java')
-////    exclude('**/ui/VariantSelectionController.java')
-////    exclude('**/ui/ViewPagerAdapter.java')
-////    exclude('**/customTabs/**')
-//
-//    classpath = configurations.compile
-//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//
-//    def designLib = "${android.sdkDirectory}/extras/android/support/design/libs/android-support-design.jar"
-//    classpath += project.files(designLib)
-//
-//    options {
-//        linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference")
-//        links("http://square.github.io/retrofit/javadoc")
-//    }
-//}
-//
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    classifier = 'javadoc'
-//    baseName = 'testify'
-//    from javadoc.destinationDir
-//}
+/*
+Great guide for publishing to JCenter:
+http://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
 
-apply from: 'maven.gradle'
+Also search for 'userOrg' here (we need this to publish to the Shopify organization on Bintray):
+https://github.com/bintray/gradle-bintray-plugin
+*/
+
+
+sourceSets {
+    javadoc {
+        java.srcDirs = ['src/main/java']
+    }
+}
+
+task javadoc(type: Javadoc) {
+    source = sourceSets.javadoc.allSource
+    title = "Android Testify"
+
+//    exclude('**/internal/**')
+
+    classpath = configurations.compile
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+
+    def designLib = "${android.sdkDirectory}/extras/android/support/design/libs/android-support-design.jar"
+    classpath += project.files(designLib)
+
+    options {
+        linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference")
+        links("http://square.github.io/retrofit/javadoc")
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    baseName = 'testify'
+    from javadoc.destinationDir
+}
+
+// Params for bintrayUpload
+ext {
+    bintrayOrg = 'shopify'
+    bintrayRepo = 'shopify-android'
+    bintrayName = 'testify'
+
+    publishedGroupId = 'com.shopify.testify'
+    libraryName = 'testify'
+    artifact = 'testify'
+
+    libraryDescription = 'Screenshot Android instrumentation tests.'
+
+    siteUrl = 'https://github.com/Shopify/android-testify'
+    gitUrl = 'https://github.com/Shopify/android-testify.git'
+
+    libraryVersion = VERSION_NAME
+
+    licenseName = 'The MIT License'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
+}
+
+task archiveReleasePackage(type: Zip, dependsOn: [assembleRelease, javadocJar]) {
+    baseName = "testify"
+
+    from("./build/libs") {
+        include javadocJar.getArchiveName()
+    }
+
+    from("./build/docs") {
+        include 'javadoc/**'
+    }
+
+    from("./build/outputs/aar") {
+        include baseName + "-" + version + ".aar"
+    }
+
+    from("..") {
+        include "sample/src/main/**"
+        include "sample/.gitignore"
+        include "sample/build.gradle.packaging"
+        include "sample/proguard-rules.pro"
+
+        rename "build.gradle.packaging", "build.gradle"
+    }
+
+    from("../..") {
+        include "LICENSE"
+        include "NOTICE"
+    }
+
+    into(baseName + "-" + version)
+}
+
+group = publishedGroupId
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                groupId publishedGroupId
+                artifactId artifact
+
+                // Add your description here
+                name libraryName
+                description libraryDescription
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name licenseName
+                        url licenseUrl
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+
+                }
+            }
+        }
+    }
+}
+
+version = VERSION_NAME
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+bintray {
+    /*
+    These values can be found on https://bintray.com/profile/edit
+    BINTRAY_USER : your personal profile name (from "Your Profile")
+    BINTRAY_KEY : found on the left menu, under "API Key"
+     */
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+
+    configurations = ['archives']
+    pkg {
+        userOrg = bintrayOrg
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}
