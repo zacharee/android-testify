@@ -21,3 +21,14 @@ Add to your build.gradle:
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 ```
+
+
+```
+repositories {
+    maven {
+        url "http://dl.bintray.com/shopify/shopify-android/"
+    }
+}
+
+androidTestCompile 'com.shopify.testify:testify:0.0.2'
+```
