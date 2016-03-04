@@ -54,42 +54,42 @@ dependencies {
 
 apply from: 'screenshot.gradle'
 
-sourceSets {
-    javadoc {
-        java.srcDirs = ['src/main/java']
-    }
-}
-
-task javadoc(type: Javadoc) {
-    source = sourceSets.javadoc.allSource
-    title = "Android Testify"
-
-//    exclude('**/internal/**')
-//    exclude('**/ui/ProductDetailsImageAreaTouchHandler.java')
-//    exclude('**/ui/ProductDetailsListener.java')
-//    exclude('**/ui/ProductVariantOptionView.java')
-//    exclude('**/ui/ProductImagePagerAdapter.java')
-//    exclude('**/ui/ScrollFlingGestureListener.java')
-//    exclude('**/ui/VariantSelectionController.java')
-//    exclude('**/ui/ViewPagerAdapter.java')
-//    exclude('**/customTabs/**')
-
-    classpath = configurations.compile
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-
-    def designLib = "${android.sdkDirectory}/extras/android/support/design/libs/android-support-design.jar"
-    classpath += project.files(designLib)
-
-    options {
-        linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference")
-        links("http://square.github.io/retrofit/javadoc")
-    }
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    baseName = 'testify'
-    from javadoc.destinationDir
-}
+//sourceSets {
+//    javadoc {
+//        java.srcDirs = ['src/main/java']
+//    }
+//}
+//
+//task javadoc(type: Javadoc) {
+//    source = sourceSets.javadoc.allSource
+//    title = "Android Testify"
+//
+////    exclude('**/internal/**')
+////    exclude('**/ui/ProductDetailsImageAreaTouchHandler.java')
+////    exclude('**/ui/ProductDetailsListener.java')
+////    exclude('**/ui/ProductVariantOptionView.java')
+////    exclude('**/ui/ProductImagePagerAdapter.java')
+////    exclude('**/ui/ScrollFlingGestureListener.java')
+////    exclude('**/ui/VariantSelectionController.java')
+////    exclude('**/ui/ViewPagerAdapter.java')
+////    exclude('**/customTabs/**')
+//
+//    classpath = configurations.compile
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//
+//    def designLib = "${android.sdkDirectory}/extras/android/support/design/libs/android-support-design.jar"
+//    classpath += project.files(designLib)
+//
+//    options {
+//        linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference")
+//        links("http://square.github.io/retrofit/javadoc")
+//    }
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    baseName = 'testify'
+//    from javadoc.destinationDir
+//}
 
 apply from: 'maven.gradle'
