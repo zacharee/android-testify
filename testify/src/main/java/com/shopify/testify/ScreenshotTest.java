@@ -66,7 +66,7 @@ public class ScreenshotTest {
     }
 
     private String getTestName() {
-        return testCase.getClass().getName() + "_" + testCase.getName();
+        return testCase.getClass().getSimpleName() + "_" + testCase.getName();
     }
 
     private Context getTestContext() {
