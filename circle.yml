@@ -26,4 +26,5 @@ deployment:
   production:
     branch: master
     commands:
-      -./gradlew clean bintray
+      - ./gradlew clean bintray:
+          timeout: 3600
