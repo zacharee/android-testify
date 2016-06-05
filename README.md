@@ -36,3 +36,12 @@ repositories {
 
 androidTestCompile 'com.shopify.testify:testify:0.0.2'
 ```
+
+
+### How Can I Contribute?
+
+We welcome contributions. Follow the steps in the [CONTRIBUTING](CONTRIBUTING.md) file.
+
+### License 
+
+The Mobile Buy SDK is provided under an MIT Licence. See the [LICENSE](LICENSE) file.
