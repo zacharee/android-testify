@@ -8,7 +8,7 @@
 
 ## Things we won't merge
 
-* Code which adds no significant value to the SDK
+* Code which adds no significant value to the library
 * Code which comes without tests
 * Code which breaks existing tests
 
@@ -16,7 +16,6 @@
 
 * Fork the repo and branch off of `develop`
 * Create a new branch in your fork
-* If it makes sense, add tests for your code 
-  * New keys should be added to `test_shop_data.json`, but don't check in their values
+* If it makes sense, add tests for your code
 * Make sure all tests pass
 * Create a pull request
