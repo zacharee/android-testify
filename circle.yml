@@ -1,0 +1,38 @@
+machine:
+  environment:
+    ANDROID_HOME: /usr/local/android-sdk-linux
+
+dependencies:
+  pre:
+    # downgrade to android sdk r23
+    #- echo y | android update sdk --no-ui --all --filter "build-tools-22.0.1"
+    #- echo y | android update sdk --no-ui --all --filter "extra-android-support"
+    #- echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
+    #- echo y | android update sdk --no-ui --all --filter "extra-google-m2repository"
+    #- echo y | android update sdk --no-ui --all --filter "extra-google-google_play_services"
+    #- wget http://dl.google.com/android/android-sdk_r23-linux.tgz
+    #- tar -zxf android-sdk_r23-linux.tgz -C /usr/local
+    #- rm android-sdk_r23-linux.tgz
+    #- git submodule update --init --recursive
+
+  override:
+    # - ./gradlew --no-color --refresh-dependencies
+    # - bash libraries/shopify-android-sdk/scripts/prepare-emulator.sh
+    #- $ANDROID_HOME/tools/emulator -avd testAVD -no-audio -sdcard sdcard.img:
+    #        background: true
+    #- bash ./scripts/wait-for-emulator.sh
+    #- $ANDROID_HOME/platform-tools/adb logcat -v threadtime > $CIRCLE_ARTIFACTS/logcat.txt:
+    #      background: true
+    #- bash ./scripts/install-animation-disabler.sh
+test:
+  override:
+    - ./gradlew --no-color --continue :ShopifyForAndroid:connectedAndroidTest:
+        timeout: 3600
+  #post:
+  #  - bash ./scripts/get_failure_images.sh $CIRCLE_ARTIFACTS
+  #  - cp -r ShopifyForAndroid/build/outputs/androidTest-results/connected/* $CI_REPORTS/*
+#deployment:
+#  production:
+#    branch: develop
+#    commands:
+#      - ruby ./scripts/deploy_nightly.rb
