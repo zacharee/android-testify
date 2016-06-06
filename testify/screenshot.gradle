@@ -4,36 +4,36 @@
  */
 
 boolean isRecordMode = false;
+String testRunner;
+String applicationPackage;
+
+android {
+    defaultConfig {
+        testRunner = testInstrumentationRunner;
+        applicationPackage = applicationId;
+    }
+}
 
 private String getAdbPath() {
     return project.android.getAdbExe().toString();
 }
 
 private String getDeviceImageDirectory() {
-//    final String sdCardName = "sdcard"; // TODO: make this configurable
-//    return "/storage/" + sdCardName + "/com.shopify.testify.test/images/";
-
-    return "/data/data/com.shopify.testify.test/app_images/"
-}
-
-private String getLocalImageDirectory() {
-    return "./src/androidTest/assets/screenshots/" + getDeviceKey();
-}
-
-private void assureScreenshotDirectory() {
-    File directory = new File(getLocalImageDirectory());
-    if (!directory.exists()) {
-        directory.mkdirs();
-    }
+    return "/data/data/com.shopify.shopify.debug/app_images/";
 }
 
 private void pullScreenshots() {
+    println("Copying files...")
 
-    assureScreenshotDirectory();
-
-    // TODO: make this configurable
-    def command = [getAdbPath(), "-e", 'pull', getDeviceImageDirectory(), getLocalImageDirectory()]
+    def src = getDeviceImageDirectory() + "."
+    def dst = "./Shopify/src/androidTest/assets/screenshots/" + getDeviceKey() + "/"
+    def command = [getAdbPath(), "-e", 'pull', src, dst]
     command.execute()
+
+    // Wait for all the files to be committed to disk
+    sleep(10000);
+
+    println("Ready")
 }
 
 private String getDeviceKey() {
@@ -70,13 +70,13 @@ task recordMode(type: DefaultTask, group: "Screenshot", description: "Enable rec
     }
 }
 
-task pullScreenshots(type: DefaultTask, group: "Verification") {
+task pullScreenshots(type: DefaultTask, group: "Screenshot", description: "Download the Android screenshot test images from the device") {
     doLast {
         pullScreenshots();
     }
 }
 
-task clearScreenshots(type: DefaultTask, group: "Screenshot") {
+task clearScreenshots(type: DefaultTask, group: "Screenshot", description: "Remove any existing screenshot test images from the device") {
     doLast {
         def command = [getAdbPath(), '-e', 'shell', 'rm', getDeviceImageDirectory() + "*.png"]
         def process = command.execute()
@@ -84,29 +84,26 @@ task clearScreenshots(type: DefaultTask, group: "Screenshot") {
     }
 }
 
-task screenshotTest(type: DefaultTask, dependsOn: ["connectedAndroidTest"], group: "Screenshot", description: "Run the Android screenshot tests") {
-
-    /*
-    `screenshotTest` should perform the actions that are currently being run by the `TaskActionListener` below.
-    However, I could not get the task ordering right. `screenshotTest` must depend on `connectedAndroidTest` but `connectedAndroidTest` is guaranteed to have
-    failing tests when you're running `recordMode` (they fail because you need to update the screenshot!). And, gradle defaults to aborting the task
-    sequence on failing tests. So, the body of `screenshotTest` is never called. I wanted to set `ignoreFailures = true`, but that didn't work either.
-    If I set this in a doFirst{} or doLast{} block, it doesn't take effect. If I set it in the body, it sets it for every task, every time.
-
-        project.gradle.taskGraph.whenReady {
-            connectedDebugAndroidTest {
-                ignoreFailures = true
-            }
-        }
-     */
+private void hidePasswords() {
+    def hidePasswords = [getAdbPath(), '-e', 'shell', 'settings', 'put', 'system','show_password', '0' ]
+    hidePasswords.execute()
 }
 
-gradle.addListener(new TaskActionListener() {
-    void beforeActions(Task task) {}
+task screenshotTest(type: DefaultTask, dependsOn: [":Shopify:installDebug", ":Shopify:installDebugAndroidTest"], group: "Screenshot", description: "Run the Android screenshot tests") {
+    doLast {
 
-    void afterActions(Task task) {
-        if (isRecordMode && (task.name == "connectedDebugAndroidTest") && task.didWork) {
+        hidePasswords();
+
+        def command = [getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e','annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', applicationPackage + ".debug.test/" + testRunner ]
+        def log = command.execute().text
+        log.eachLine { line -> println line }
+
+        if (!isRecordMode && (log.contains("FAILURES!!!") || log.contains("INSTRUMENTATION_CODE: 0") || log.contains("Process crashed while executing")) ) {
+            throw new Exception("Screenshot tests failed");
+        }
+
+        if (isRecordMode) {
             pullScreenshots();
         }
     }
-})
+}
