@@ -1,32 +1,19 @@
 package com.shopify.testify
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class ShowTimezoneTask extends DefaultTask  {
-
-    private String adbPath;
-
-    @Override
-    String getName() {
-        return "timezone"
-    }
+class ShowTimeZoneTask extends TestifyDefaultTask {
 
     @Override
     String getDescription() {
-        return "Shows the emulator timezone"
-    }
-
-    public void setAdbPath(String adbPath) {
-        this.adbPath = adbPath;
+        return "Shows the emulator time zone"
     }
 
     @TaskAction
-    def showTimezone() {
-        println("Timezone:")
-        println(adbPath)
-//        def showTimezone = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.timezone' ]
-//        def log = showTimezone.execute().text
-//        log.eachLine { line -> println line }
+    def showTimeZone() {
+        println("Time Zone:")
+        def showTimeZone = [DeviceUtility.getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.timezone']
+        def log = showTimeZone.execute().text
+        log.eachLine { line -> println line }
     }
 }
