@@ -9,9 +9,8 @@ class HidePasswordsTask extends TestifyDefaultTask {
         return "Hides the passwords fully on the emulator"
     }
 
-    @TaskAction
-    def showTimeZone() {
-        println("Hide passwords:")
+    @Override
+    def taskAction() {
         def hidePasswords = [DeviceUtility.getAdbPath(), '-e', 'shell', 'settings', 'put', 'system', 'show_password', '0']
         hidePasswords.execute()
     }

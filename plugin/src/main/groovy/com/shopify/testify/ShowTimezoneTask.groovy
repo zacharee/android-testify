@@ -9,9 +9,8 @@ class ShowTimeZoneTask extends TestifyDefaultTask {
         return "Shows the emulator time zone"
     }
 
-    @TaskAction
-    def showTimeZone() {
-        println("Time Zone:")
+    @Override
+    def taskAction() {
         def showTimeZone = [DeviceUtility.getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.timezone']
         def log = showTimeZone.execute().text
         log.eachLine { line -> println line }
