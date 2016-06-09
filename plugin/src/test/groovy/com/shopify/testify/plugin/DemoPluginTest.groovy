@@ -10,7 +10,7 @@ class DemoPluginTest {
     @Test
     public void demo_plugin_should_add_task_to_project() {
         Project project = ProjectBuilder.builder().build()
-        project.getPlugins().apply 'com.shopify.testify.plugin.demo.plugin'
+        project.getPlugins().apply 'com.shopify.testify.plugin'
 
         assertTrue(project.tasks.demo instanceof DemoTask)
     }
