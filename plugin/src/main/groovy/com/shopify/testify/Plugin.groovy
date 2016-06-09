@@ -10,5 +10,6 @@ class Plugin implements org.gradle.api.Plugin<Project> {
 
         target.tasks.create("showTimeZone", ShowTimeZoneTask.class)
         target.tasks.create("hidePasswords", HidePasswordsTask.class)
+        target.tasks.create("deviceKey", DeviceKeyTask.class)
     }
 }

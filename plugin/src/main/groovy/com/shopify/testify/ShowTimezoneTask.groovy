@@ -12,7 +12,7 @@ class ShowTimeZoneTask extends TestifyDefaultTask {
     @Override
     def taskAction() {
         def showTimeZone = [DeviceUtility.getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.timezone']
-        def log = showTimeZone.execute().text
-        log.eachLine { line -> println line }
+
+        println "\n\t\t=> \"${showTimeZone.execute().text.trim()}\""
     }
 }
