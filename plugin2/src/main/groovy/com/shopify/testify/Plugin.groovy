@@ -1,9 +1,8 @@
 package com.shopify.testify
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class BlogPlugin implements Plugin<Project> {
+class Plugin implements org.gradle.api.Plugin<Project> {
 
     static void addTask(Project target, String name, Closure task, String group, String description) {
 
