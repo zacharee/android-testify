@@ -4,7 +4,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-def VERSION_NAME = '0.0.7'
+def VERSION_NAME = '0.0.8'
 
 android {
     compileSdkVersion 23
@@ -36,7 +36,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
 
 apply from: 'screenshot.gradle'
