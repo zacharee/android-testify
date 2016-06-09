@@ -1,11 +1,12 @@
 package com.shopify.testify
 
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class BlogPlugin implements Plugin<Project> {
 
-    static void addTask(Project target, def name, task, def group, def description) {
+    static void addTask(Project target, String name, Closure task, String group, String description) {
 
         def newTask = target.tasks.create("$name") << {
             task()
@@ -17,12 +18,6 @@ class BlogPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project target) {
-        def showDevicesTask = target.tasks.create("showDevices") << {
-            def adbExe = target.android.getAdbExe().toString()
-            println "${adbExe} devices".execute().text
-        }
-        showDevicesTask.group = "blogplugin"
-        showDevicesTask.description = "Runs adb devices command"
 
         addTask(target, "dan", {
             task:
@@ -32,5 +27,7 @@ class BlogPlugin implements Plugin<Project> {
             }
         }, "Testify", "My first task")
 
+        def action = { action -> setAdbPath(target.android.getAdbExe().toString()) }
+        target.tasks.create("timezone", ShowTimezoneTask.class, action)
     }
 }
