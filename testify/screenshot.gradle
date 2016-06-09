@@ -89,10 +89,19 @@ private void hidePasswords() {
     hidePasswords.execute()
 }
 
+private void showTimezone() {
+    // adb shell getprop persist.sys.timezone
+    println("Timezone:")
+    def showTimezone = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.timezone' ]
+    def log = showTimezone.execute().text
+    log.eachLine { line -> println line }
+}
+
 task screenshotTest(type: DefaultTask, dependsOn: [":Shopify:installDebug", ":Shopify:installDebugAndroidTest"], group: "Screenshot", description: "Run the Android screenshot tests") {
     doLast {
 
         hidePasswords();
+        showTimezone();
 
         def command = [getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e','annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', applicationPackage + ".debug.test/" + testRunner ]
         def log = command.execute().text
