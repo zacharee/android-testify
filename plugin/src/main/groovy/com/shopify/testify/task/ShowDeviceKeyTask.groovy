@@ -2,7 +2,7 @@ package com.shopify.testify.task
 
 import com.shopify.testify.DeviceUtility
 
-class DeviceKeyTask extends TestifyDefaultTask {
+class ShowDeviceKeyTask extends TestifyDefaultTask {
 
     @Override
     String getDescription() {
@@ -12,6 +12,6 @@ class DeviceKeyTask extends TestifyDefaultTask {
     @Override
     def taskAction() {
         def deviceKey = DeviceUtility.getDeviceKey()
-        println "\n\t\t=> \"${deviceKey}\""
+        println "\n\t\"${deviceKey}\""
     }
 }
