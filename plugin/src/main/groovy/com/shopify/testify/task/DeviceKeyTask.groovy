@@ -1,4 +1,6 @@
-package com.shopify.testify
+package com.shopify.testify.task
+
+import com.shopify.testify.DeviceUtility
 
 class DeviceKeyTask extends TestifyDefaultTask {
 

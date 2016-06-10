@@ -1,6 +1,6 @@
-package com.shopify.testify
+package com.shopify.testify.task
 
-import org.gradle.api.tasks.TaskAction
+import com.shopify.testify.DeviceUtility
 
 class HidePasswordsTask extends TestifyDefaultTask {
 

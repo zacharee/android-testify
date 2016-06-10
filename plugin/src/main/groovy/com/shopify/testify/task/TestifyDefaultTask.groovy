@@ -1,4 +1,4 @@
-package com.shopify.testify
+package com.shopify.testify.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
