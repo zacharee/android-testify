@@ -26,6 +26,25 @@ dependencies {
 }
 ```
 
+```
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/shopify/shopify-android/' }
+    }
+    dependencies {
+        classpath 'com.shopify.testify:plugin:0.0.7'
+    }
+}
+
+apply plugin: 'com.shopify.testify'
+
+testifySettings {
+    applicationPackageId = project.android.defaultConfig.applicationId + ".debug"
+    pullWaitTime = 0
+    testRunner = project.android.defaultConfig.testInstrumentationRunner
+}
+```
+
 ### How Can I Contribute?
 
 We welcome contributions. Follow the steps in the [CONTRIBUTING](CONTRIBUTING.md) file.
