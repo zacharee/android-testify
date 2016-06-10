@@ -11,7 +11,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 12
         targetSdkVersion 23
         versionCode 1
         versionName VERSION_NAME
@@ -31,6 +31,15 @@ android {
                 output.outputFile = new File(outputFile.parent, fileName)
             }
         }
+    }
+
+    lintOptions {
+        disable 'InvalidPackage','RtlSymmetry','RtlHardcoded','GoogleAppIndexingWarning'
+        abortOnError true
+        warningsAsErrors true
+        textOutput 'stdout'
+        textReport true
+        xmlReport false
     }
 }
 
