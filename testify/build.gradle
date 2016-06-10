@@ -48,8 +48,6 @@ dependencies {
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
 
-apply from: 'screenshot.gradle'
-
 /*
 Great guide for publishing to JCenter:
 http://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
