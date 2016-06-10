@@ -11,6 +11,9 @@ import java.lang.reflect.Method;
 
 public class DeviceIdentifier {
 
+    private DeviceIdentifier() {
+    }
+
     public static String getDescription(@NonNull Context context) {
         final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         final DisplayMetrics metrics = new DisplayMetrics();

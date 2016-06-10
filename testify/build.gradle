@@ -206,3 +206,18 @@ bintray {
         }
     }
 }
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = "6.17"
+}
+
+task checkstyle(type: Checkstyle) {
+    configFile = new File(rootDir, "checkstyle/config.xml")
+    configProperties.checkstyleSuppressionsPath = new File(rootDir, "checkstyle/suppressions.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
+}
