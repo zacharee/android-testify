@@ -1,16 +1,9 @@
 package com.shopify.testify
 
-import org.gradle.api.Project
-
 abstract class DeviceUtility {
-    static private Project project;
-
-    static def setProject(Project project) {
-        this.project = project
-    }
 
     static def getAdbPath() {
-        return project.android.getAdbExe().toString()
+        return ProjectWrapper.project.android.getAdbExe().toString()
     }
 
     static def getDeviceKey() {
@@ -26,16 +19,8 @@ abstract class DeviceUtility {
         return "${version}-${size}@${density}dp"
     }
 
-    static def getExtension() {
-        TestifyExtension extension = project.getExtensions().findByType(TestifyExtension.class)
-        if (extension == null) {
-            throw new Exception("define your shit")
-        }
-        return extension
-    }
-
     static def getDeviceImageDirectory() {
-        return "/data/data/${extension.applicationPackageId}/app_images/";
+        return "/data/data/${ProjectWrapper.extension.applicationPackageId}/app_images/";
     }
 
     static def pullScreenshots() {
@@ -47,7 +32,7 @@ abstract class DeviceUtility {
         [getAdbPath(), "-e", 'pull', src, dst].execute()
 
         // Wait for all the files to be committed to disk
-        sleep(extension.pullWaitTime);
+        sleep(ProjectWrapper.extension.pullWaitTime);
 
         println("Ready")
     }
