@@ -120,7 +120,6 @@ public class ScreenshotTest {
     }
 
     public void assertSame() throws Exception {
-
         assertNotNull("You must specify an instrumentation test case.\n\n * Call ScreenshotAssert.instrumentation(this);\n", testCase);
 
         final Activity activity = testCase.getActivity();

@@ -126,11 +126,6 @@ public class ScreenshotUtility {
 
     /**
      * Load a baseline bitmap from the androidTest assets directory.
-     *
-     * @param context
-     * @param testName
-     * @return
-     * @throws Exception
      */
     @Nullable
     public Bitmap loadBaselineBitmapForComparison(@NonNull Context context, String testName) throws Exception {
@@ -140,10 +135,6 @@ public class ScreenshotUtility {
 
     /**
      * Capture a bitmap from the given Activity and save it to the screenshots directory.
-     *
-     * @param activity
-     * @param testName
-     * @return
      */
     @Nullable
     public Bitmap createBitmapFromActivity(final Activity activity, String testName) throws Exception {
@@ -173,10 +164,6 @@ public class ScreenshotUtility {
 
     /**
      * Compare two bitmaps using {@link Bitmap#sameAs(Bitmap)}
-     *
-     * @param baselineBitmap
-     * @param currentBitmap
-     * @return
      */
     public boolean compareBitmaps(@Nullable Bitmap baselineBitmap, @Nullable Bitmap currentBitmap) {
         return !(baselineBitmap == null || currentBitmap == null) && baselineBitmap.sameAs(currentBitmap);
