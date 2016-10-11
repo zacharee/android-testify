@@ -27,7 +27,11 @@ class TestifyExtension {
     }
 
     long getPullWaitTime() {
-        return pullWaitTime
+        if (ProjectWrapper.project.hasProperty("pullWaitTime")) {
+            return ProjectWrapper.project.pullWaitTime.toLong()
+        } else {
+            return pullWaitTime
+        }
     }
 
     void setPullWaitTime(long pullWaitTime) {
