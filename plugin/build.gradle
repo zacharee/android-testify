@@ -1,0 +1,112 @@
+group = 'com.shopify.testify'
+version = '1.0-SNAPSHOT'
+def VERSION_NAME = '0.1.8'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+sourceCompatibility = 1.7
+
+dependencies {
+    compile gradleApi()
+
+    testCompile 'junit:junit:4.12'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+// Params for bintrayUpload
+ext {
+    bintrayOrg = 'shopify'
+    bintrayRepo = 'shopify-android'
+    bintrayName = 'testify-plugin'
+    publishedGroupId = 'com.shopify.testify'
+    libraryName = 'testify-plugin'
+    artifact = 'testify-plugin'
+    libraryDescription = 'Screenshot Android instrumentation tests plugin.'
+    siteUrl = 'https://github.com/Shopify/android-testify'
+    gitUrl = 'https://github.com/Shopify/android-testify.git'
+    libraryVersion = VERSION_NAME
+    licenseName = 'The MIT License'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
+}
+
+group = publishedGroupId
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'jar'
+                groupId publishedGroupId
+                artifactId artifact
+
+                // Add your description here
+                name libraryName
+                description libraryDescription
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name licenseName
+                        url licenseUrl
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+
+                }
+            }
+        }
+    }
+}
+
+version = VERSION_NAME
+
+bintray {
+    /*
+    These values can be found on https://bintray.com/profile/edit
+    BINTRAY_USER : your personal profile name (from "Your Profile")
+    BINTRAY_KEY : found on the left menu, under "API Key"
+     */
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+
+    configurations = ['archives']
+    pkg {
+        userOrg = bintrayOrg
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}
