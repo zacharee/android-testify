@@ -45,6 +45,19 @@ testifySettings {
 }
 ```
 
+### How to build?
+
+#### Plugin:
+
+- Visit https://bintray.com/profile/edit
+- Set `BINTRAY_USER` to your personal profile name (from "Your Profile")
+  - ex. `export BINTRAY_USER="danieljette"`
+- Set `BINTRAY_KEY`. It can be found on the left menu, under "API Key"
+  - ex. `export BINTRAY_KEY="8e5e06...d418b"`
+- `./gradlew :plugin:bintrayUpload`
+
+Note: You might need to bump the `VERSION_NAME` in `./plugin/build.gradle`
+
 ### How Can I Contribute?
 
 We welcome contributions. Follow the steps in the [CONTRIBUTING](CONTRIBUTING.md) file.

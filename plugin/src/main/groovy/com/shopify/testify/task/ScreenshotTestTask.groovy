@@ -1,6 +1,7 @@
 package com.shopify.testify.task
 
 import com.shopify.testify.DeviceUtility
+import com.shopify.testify.ProjectWrapper
 
 class ScreenshotTestTask extends TestifyDefaultTask {
 
@@ -11,8 +12,8 @@ class ScreenshotTestTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
-        def testPackage = DeviceUtility.extension.testPackageId
-        def testRunner = DeviceUtility.extension.testRunner
+        def testPackage = ProjectWrapper.extension.testPackageId
+        def testRunner = ProjectWrapper.extension.testRunner
 
         def command = [DeviceUtility.getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
         def log = command.execute().text
@@ -29,7 +30,9 @@ class ScreenshotTestTask extends TestifyDefaultTask {
 
     static def addDependencies(ScreenshotTestTask task) {
         task.dependsOn "hidePasswords"
-        task.dependsOn ":Shopify:installDebug"
-        task.dependsOn ":Shopify:installDebugAndroidTest"
+        // TODO: Distinguish between lib and app
+//        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebug"
+//        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebugAndroidTest"
+        task.dependsOn ":ShopifyUX:installDebugAndroidTest"
     }
 }

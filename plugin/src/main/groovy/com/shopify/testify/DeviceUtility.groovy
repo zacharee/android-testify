@@ -20,14 +20,21 @@ abstract class DeviceUtility {
     }
 
     static def getDeviceImageDirectory() {
-        return "/data/data/${ProjectWrapper.extension.applicationPackageId}/app_images/";
+        return "/data/data/${ProjectWrapper.extension.testPackageId}/app_images/"
+    }
+
+    static def getDestinationImageDirectory() {
+        return "${ProjectWrapper.extension.baselineSourceDir}/${getDeviceKey()}/"
     }
 
     static def pullScreenshots() {
         println("Copying files...")
 
         def src = getDeviceImageDirectory() + "."
-        def dst = "./Shopify/src/androidTest/assets/screenshots/" + getDeviceKey() + "/"
+        def dst = getDestinationImageDirectory()
+
+        println "src:\t${src}"
+        println "dst:\t${dst}"
 
         [getAdbPath(), "-e", 'pull', src, dst].execute()
 

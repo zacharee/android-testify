@@ -6,6 +6,24 @@ class TestifyExtension {
     private String testPackageId
     private long pullWaitTime
     private String testRunner
+    private String baselineSourceDir
+    private String moduleName;
+
+    String getModuleName() {
+        return moduleName
+    }
+
+    void setModuleName(String moduleName) {
+        this.moduleName = moduleName
+    }
+
+    String getBaselineSourceDir() {
+        return baselineSourceDir
+    }
+
+    void setBaselineSourceDir(String baselineSourceDir) {
+        this.baselineSourceDir = baselineSourceDir
+    }
 
     String getTestPackageId() {
         if (testPackageId == null) {

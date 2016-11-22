@@ -8,6 +8,8 @@ import com.shopify.testify.task.HidePasswordsTask
 import com.shopify.testify.task.PullScreenshotsTask
 import com.shopify.testify.task.RecordModeTask
 import com.shopify.testify.task.ShowTimeZoneTask
+import com.shopify.testify.task.VersionTask
+import jdk.nashorn.internal.runtime.Version
 import org.gradle.api.Project
 
 class Plugin implements org.gradle.api.Plugin<Project> {
@@ -23,6 +25,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("recordMode", RecordModeTask.class)
         project.tasks.create("clearScreenshots", ClearScreenshotsTask.class)
         project.tasks.create("showArgs", ShowArgsTask.class)
+        project.tasks.create("testifyVersion", VersionTask.class)
         def task = project.tasks.create("screenshotTest", ScreenshotTestTask.class)
         ScreenshotTestTask.addDependencies(task)
 
