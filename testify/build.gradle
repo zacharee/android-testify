@@ -4,14 +4,14 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-def VERSION_NAME = '0.0.7'
+def VERSION_NAME = '0.0.8'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 12
         targetSdkVersion 23
         versionCode 1
         versionName VERSION_NAME
@@ -32,14 +32,21 @@ android {
             }
         }
     }
+
+    lintOptions {
+        disable 'InvalidPackage','RtlSymmetry','RtlHardcoded','GoogleAppIndexingWarning'
+        abortOnError true
+        warningsAsErrors true
+        textOutput 'stdout'
+        textReport true
+        xmlReport false
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
-
-apply from: 'screenshot.gradle'
 
 /*
 Great guide for publishing to JCenter:
@@ -205,4 +212,19 @@ bintray {
             desc = libraryDescription
         }
     }
+}
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = "6.17"
+}
+
+task checkstyle(type: Checkstyle) {
+    configFile = new File(rootDir, "checkstyle/config.xml")
+    configProperties.checkstyleSuppressionsPath = new File(rootDir, "checkstyle/suppressions.xml")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
 }

@@ -1,1 +1,2 @@
 include ':testify'
+include ':plugin'
