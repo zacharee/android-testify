@@ -3,7 +3,7 @@ buildscript {
         maven { url 'http://dl.bintray.com/shopify/shopify-android/' }
     }
     dependencies {
-        classpath 'com.shopify.testify:plugin:0.1.17'
+        classpath 'com.shopify.testify:plugin:0.1.26'
     }
 }
 
@@ -36,7 +36,8 @@ testifySettings {
     pullWaitTime = 0
     testRunner = project.android.defaultConfig.testInstrumentationRunner
     baselineSourceDir = "./app/src/androidTest/assets/screenshots"
-    moduleName = "sample"
+    testContextId = applicationPackageId
+    moduleName = "app"
 }
 
 dependencies {

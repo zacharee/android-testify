@@ -30,9 +30,7 @@ class ScreenshotTestTask extends TestifyDefaultTask {
 
     static def addDependencies(ScreenshotTestTask task) {
         task.dependsOn "hidePasswords"
-        // TODO: Distinguish between lib and app
-//        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebug"
-//        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebugAndroidTest"
-        task.dependsOn ":ShopifyUX:installDebugAndroidTest"
+        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebug"
+        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebugAndroidTest"
     }
 }

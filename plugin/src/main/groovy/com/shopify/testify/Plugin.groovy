@@ -18,6 +18,8 @@ class Plugin implements org.gradle.api.Plugin<Project> {
     void apply(Project project) {
         ProjectWrapper.setProject(project)
 
+        project.extensions.create("testifySettings", TestifyExtension.class)
+
         project.tasks.create("showTimeZone", ShowTimeZoneTask.class)
         project.tasks.create("hidePasswords", HidePasswordsTask.class)
         project.tasks.create("deviceKey", ShowDeviceKeyTask.class)
@@ -27,8 +29,9 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("showArgs", ShowArgsTask.class)
         project.tasks.create("testifyVersion", VersionTask.class)
         def task = project.tasks.create("screenshotTest", ScreenshotTestTask.class)
-        ScreenshotTestTask.addDependencies(task)
 
-        project.extensions.create("testifySettings", TestifyExtension.class)
+        project.afterEvaluate {
+            ScreenshotTestTask.addDependencies(task)
+        }
     }
 }
