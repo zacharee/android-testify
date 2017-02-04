@@ -39,9 +39,11 @@ buildscript {
 apply plugin: 'com.shopify.testify'
 
 testifySettings {
-    applicationPackageId = project.android.defaultConfig.applicationId + ".debug"
+    applicationPackageId = project.android.defaultConfig.applicationId
     pullWaitTime = 0
     testRunner = project.android.defaultConfig.testInstrumentationRunner
+    baselineSourceDir = "./ShopifyUX/src/androidTest/assets/screenshots"
+    moduleName = "ShopifyUX"
 }
 ```
 

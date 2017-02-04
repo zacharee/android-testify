@@ -23,20 +23,14 @@
  */
 package com.shopify.testifysample;
 
-import com.shopify.testify.ScreenshotTest;
-import com.shopify.testify.ScreenshotTestCase;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-public class BasicTests extends ScreenshotTestCase<TestHarnessActivity> {
+public class TestHarnessActivity extends AppCompatActivity {
 
-    public BasicTests() {
-        super(TestHarnessActivity.class, R.id.component_placeholder);
-    }
-
-    public void testBootstrap() throws Exception {
-        new ScreenshotTest(this, R.layout.test_bootstrap).assertSame();
-    }
-
-    public void testMainActivity() throws Exception {
-        new ScreenshotTest(this, R.layout.activity_main).assertSame();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_component_test);
     }
 }

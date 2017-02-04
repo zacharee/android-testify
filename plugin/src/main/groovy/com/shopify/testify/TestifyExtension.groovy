@@ -8,6 +8,18 @@ class TestifyExtension {
     private String testRunner
     private String baselineSourceDir
     private String moduleName;
+    private String testContextId
+
+    String getTestContextId() {
+        if (testContextId == null) {
+            testContextId = ProjectWrapper.extension.testPackageId
+        }
+        return testContextId
+    }
+
+    void setTestContextId(String testContextId) {
+        this.testContextId = testContextId
+    }
 
     String getModuleName() {
         return moduleName

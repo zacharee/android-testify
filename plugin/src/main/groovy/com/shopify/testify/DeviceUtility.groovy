@@ -20,7 +20,13 @@ abstract class DeviceUtility {
     }
 
     static def getDeviceImageDirectory() {
-        return "/data/data/${ProjectWrapper.extension.testPackageId}/app_images/"
+        /*
+        The Testify sample project requires this to be applicationPackageId
+        I _think_ ShopifyUX requires this to e the testPackageId
+        Not sure why the sample doesn't use the test package
+        Perhaps Testify is using the wrong Context to write files
+         */
+        return "/data/data/${ProjectWrapper.extension.testContextId}/app_images/"
     }
 
     static def getDestinationImageDirectory() {
