@@ -1,15 +1,6 @@
 package com.shopify.testify
 
-import com.shopify.testify.task.ClearScreenshotsTask
-import com.shopify.testify.task.ScreenshotTestTask
-import com.shopify.testify.task.ShowArgsTask
-import com.shopify.testify.task.ShowDeviceKeyTask
-import com.shopify.testify.task.HidePasswordsTask
-import com.shopify.testify.task.PullScreenshotsTask
-import com.shopify.testify.task.RecordModeTask
-import com.shopify.testify.task.ShowTimeZoneTask
-import com.shopify.testify.task.VersionTask
-import jdk.nashorn.internal.runtime.Version
+import com.shopify.testify.task.*
 import org.gradle.api.Project
 
 class Plugin implements org.gradle.api.Plugin<Project> {
@@ -18,7 +9,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
     void apply(Project project) {
         ProjectWrapper.setProject(project)
 
-        project.extensions.create("testifySettings", TestifyExtension.class)
+        project.extensions.create("testify", InputSettingsExtension)
 
         project.tasks.create("showTimeZone", ShowTimeZoneTask.class)
         project.tasks.create("hidePasswords", HidePasswordsTask.class)
@@ -31,7 +22,8 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("screenshotTest", ScreenshotTestTask.class)
 
         project.afterEvaluate {
-            ScreenshotTestTask.addDependencies(project.tasks)
+            InputSettingsExtension.validate(project)
+//            ScreenshotTestTask.addDependencies(project)
         }
     }
 }

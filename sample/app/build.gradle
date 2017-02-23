@@ -32,7 +32,7 @@ android {
     }
 }
 
-testifySettings {
+testify {
     applicationPackageId = project.android.defaultConfig.applicationId
     pullWaitTime = 0
     testRunner = project.android.defaultConfig.testInstrumentationRunner

@@ -26,11 +26,11 @@ abstract class DeviceUtility {
         Not sure why the sample doesn't use the test package
         Perhaps Testify is using the wrong Context to write files
          */
-        return "/data/data/${ProjectWrapper.extension.testContextId}/app_images/"
+        return "/data/data/${ProjectWrapper.project.testify.testContextId}/app_images/"
     }
 
     static def getDestinationImageDirectory() {
-        return "${ProjectWrapper.extension.baselineSourceDir}/${getDeviceKey()}/"
+        return "${ProjectWrapper.project.testify.baselineSourceDir}/${getDeviceKey()}/"
     }
 
     static def pullScreenshots() {
@@ -45,7 +45,7 @@ abstract class DeviceUtility {
         [getAdbPath(), "-e", 'pull', src, dst].execute()
 
         // Wait for all the files to be committed to disk
-        sleep(ProjectWrapper.extension.pullWaitTime);
+        sleep(ProjectWrapper.project.testify.pullWaitTime);
 
         println("Ready")
     }

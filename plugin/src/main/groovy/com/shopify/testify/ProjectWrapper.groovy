@@ -13,12 +13,4 @@ class ProjectWrapper {
     static def setProject(Project project) {
         this.project = project
     }
-
-    static def getExtension() {
-        TestifyExtension extension = project.getExtensions().findByType(TestifyExtension.class)
-        if (extension == null) {
-            throw new Exception("define your shit")
-        }
-        return extension
-    }
 }
