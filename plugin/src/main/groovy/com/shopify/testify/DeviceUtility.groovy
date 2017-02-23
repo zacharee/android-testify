@@ -28,12 +28,6 @@ class DeviceUtility {
     }
 
     def getDeviceImageDirectory() {
-        /*
-        The Testify sample project requires this to be applicationPackageId
-        I _think_ ShopifyUX requires this to e the testPackageId
-        Not sure why the sample doesn't use the test package
-        Perhaps Testify is using the wrong Context to write files
-         */
         return "/data/data/${project.testify.testContextId}/app_images/"
     }
 

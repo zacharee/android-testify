@@ -18,7 +18,7 @@ class ScreenshotTestTask extends TestifyDefaultTask {
         def shardCount = project.getProperties().get("shardCount")
         if (shardIndex != null && shardCount != null) {
             shardParams = "-e numShards ${shardCount} -e shardIndex ${shardIndex}"
-            println "Running test shard ${shardIndex} or ${shardCount}..."
+            println "\nRunning test shard ${shardIndex} of ${shardCount}..."
         }
 
         def testPackage = project.testify.testPackageId
