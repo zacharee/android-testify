@@ -28,10 +28,10 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("clearScreenshots", ClearScreenshotsTask.class)
         project.tasks.create("showArgs", ShowArgsTask.class)
         project.tasks.create("testifyVersion", VersionTask.class)
-        def task = project.tasks.create("screenshotTest", ScreenshotTestTask.class)
+        project.tasks.create("screenshotTest", ScreenshotTestTask.class)
 
         project.afterEvaluate {
-            ScreenshotTestTask.addDependencies(task)
+            ScreenshotTestTask.addDependencies(project.tasks)
         }
     }
 }

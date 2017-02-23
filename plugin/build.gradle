@@ -1,6 +1,6 @@
 group = 'com.shopify.testify'
 version = '1.0-SNAPSHOT'
-def VERSION_NAME = '0.1.26'
+def VERSION_NAME = '0.3.1'
 
 buildscript {
     repositories {
@@ -38,7 +38,7 @@ ext {
     bintrayName = 'testify-plugin'
     publishedGroupId = 'com.shopify.testify'
     libraryName = 'testify-plugin'
-    artifact = 'testify-plugin'
+    artifact = 'plugin'
     libraryDescription = 'Screenshot Android instrumentation tests plugin.'
     siteUrl = 'https://github.com/Shopify/android-testify'
     gitUrl = 'https://github.com/Shopify/android-testify.git'
