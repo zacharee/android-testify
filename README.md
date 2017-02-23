@@ -47,6 +47,13 @@ testifySettings {
 }
 ```
 
+### TODO:
+
+- update for `testify` extensions
+- document all the tasks
+- show how to build locally
+- demonstrate sharding
+
 ### How to build?
 
 #### Plugin:

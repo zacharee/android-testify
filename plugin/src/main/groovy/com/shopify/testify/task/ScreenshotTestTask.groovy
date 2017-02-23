@@ -13,20 +13,32 @@ class ScreenshotTestTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
+        def shardParams = ""
+        def shardIndex = project.getProperties().get("shardIndex")
+        def shardCount = project.getProperties().get("shardCount")
+        if (shardIndex != null && shardCount != null) {
+            shardParams = "-e numShards ${shardCount} -e shardIndex ${shardIndex}"
+            println "Running test shard ${shardIndex} or ${shardCount}..."
+        }
+
         def testPackage = project.testify.testPackageId
         def testRunner = project.testify.testRunner
 
-        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
+        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', shardParams, '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
 
-        def log = command.execute().text
-        log.eachLine { line -> println line }
+        def log
+        def process = command.execute()
+        process.in.eachLine { line ->
+            println line
+            log += line
+        }
 
         if (!RecordModeTask.isRecordMode && (log.contains("FAILURES!!!") || log.contains("INSTRUMENTATION_CODE: 0") || log.contains("Process crashed while executing"))) {
             throw new Exception("Screenshot tests failed");
         }
 
         if (RecordModeTask.isRecordMode) {
-            DeviceUtility.pullScreenshots();
+            new DeviceUtility(project).pullScreenshots();
         }
     }
 
