@@ -18,6 +18,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("showArgs", ShowArgsTask.class)
         project.tasks.create("testifyVersion", VersionTask.class)
         project.tasks.create("screenshotTest", ScreenshotTestTask.class)
+        project.tasks.create("showSettings", SettingsTask.class)
 
         project.afterEvaluate {
             InputSettingsExtension.validate(project)
