@@ -19,6 +19,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("testifyVersion", VersionTask.class)
         project.tasks.create("screenshotTest", ScreenshotTestTask.class)
         project.tasks.create("showSettings", SettingsTask.class)
+        project.tasks.create("disableSoftKeyboard", DisableSoftKeyboardTask.class)
 
         project.afterEvaluate {
             InputSettingsExtension.validate(project)
