@@ -13,7 +13,7 @@ class InputSettingsExtension {
 
     String getTestContextId() {
         if (testContextId == null) {
-            testContextId = ProjectWrapper.project.testify.testPackageId
+            testContextId = getTestPackageId()
         }
         return testContextId
     }
@@ -23,14 +23,6 @@ class InputSettingsExtension {
             return "${applicationPackageId}.test"
         }
         return testPackageId
-    }
-
-    long getPullWaitTime() {
-        if (ProjectWrapper.project.hasProperty("pullWaitTime")) {
-            return ProjectWrapper.project.pullWaitTime.toLong()
-        } else {
-            return pullWaitTime
-        }
     }
 
     static void validate(Project project) {

@@ -1,12 +1,20 @@
 package com.shopify.testify
 
-abstract class DeviceUtility {
+import org.gradle.api.Project
 
-    static def getAdbPath() {
-        return ProjectWrapper.project.android.getAdbExe().toString()
+class DeviceUtility {
+
+    Project project
+
+    DeviceUtility(Project project) {
+        this.project = project
     }
 
-    static def getDeviceKey() {
+    def getAdbPath() {
+        return project.android.getAdbExe().toString()
+    }
+
+    def getDeviceKey() {
         def versionLine = [getAdbPath(), '-e', 'shell', 'getprop', 'ro.build.version.sdk']
         def version = versionLine.execute().text.trim()
 
@@ -19,21 +27,21 @@ abstract class DeviceUtility {
         return "${version}-${size}@${density}dp"
     }
 
-    static def getDeviceImageDirectory() {
+    def getDeviceImageDirectory() {
         /*
         The Testify sample project requires this to be applicationPackageId
         I _think_ ShopifyUX requires this to e the testPackageId
         Not sure why the sample doesn't use the test package
         Perhaps Testify is using the wrong Context to write files
          */
-        return "/data/data/${ProjectWrapper.project.testify.testContextId}/app_images/"
+        return "/data/data/${project.testify.testContextId}/app_images/"
     }
 
-    static def getDestinationImageDirectory() {
-        return "${ProjectWrapper.project.testify.baselineSourceDir}/${getDeviceKey()}/"
+    def getDestinationImageDirectory() {
+        return "${project.testify.baselineSourceDir}/${getDeviceKey()}/"
     }
 
-    static def pullScreenshots() {
+    def pullScreenshots() {
         println("Copying files...")
 
         def src = getDeviceImageDirectory() + "."
@@ -45,7 +53,7 @@ abstract class DeviceUtility {
         [getAdbPath(), "-e", 'pull', src, dst].execute()
 
         // Wait for all the files to be committed to disk
-        sleep(ProjectWrapper.project.testify.pullWaitTime);
+        sleep(project.testify.pullWaitTime);
 
         println("Ready")
     }

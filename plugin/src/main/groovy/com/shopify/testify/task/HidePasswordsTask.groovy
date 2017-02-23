@@ -11,7 +11,7 @@ class HidePasswordsTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
-        def hidePasswords = [DeviceUtility.getAdbPath(), '-e', 'shell', 'settings', 'put', 'system', 'show_password', '0']
+        def hidePasswords = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'settings', 'put', 'system', 'show_password', '0']
         hidePasswords.execute()
     }
 }

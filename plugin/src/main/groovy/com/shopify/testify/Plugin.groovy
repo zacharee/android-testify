@@ -7,8 +7,6 @@ class Plugin implements org.gradle.api.Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        ProjectWrapper.setProject(project)
-
         project.extensions.create("testify", InputSettingsExtension)
 
         project.tasks.create("showTimeZone", ShowTimeZoneTask.class)
@@ -23,7 +21,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
 
         project.afterEvaluate {
             InputSettingsExtension.validate(project)
-//            ScreenshotTestTask.addDependencies(project)
+            ScreenshotTestTask.addDependencies(project)
         }
     }
 }

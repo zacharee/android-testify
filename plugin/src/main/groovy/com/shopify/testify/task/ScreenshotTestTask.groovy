@@ -18,7 +18,7 @@ class ScreenshotTestTask extends TestifyDefaultTask {
         def testPackage = project.testify.testPackageId
         def testRunner = project.testify.testRunner
 
-        def command = [DeviceUtility.getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
+        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
 
         println  "\n\n*********\n"
         println project.testify.applicationPackageId

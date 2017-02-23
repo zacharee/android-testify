@@ -11,7 +11,7 @@ class ClearScreenshotsTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
-        def command = [DeviceUtility.getAdbPath(), '-e', 'shell', 'rm', DeviceUtility.getDeviceImageDirectory() + "*.png"]
+        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'rm', DeviceUtility.getDeviceImageDirectory() + "*.png"]
         def process = command.execute()
         process.in.eachLine { line -> println line }
 
