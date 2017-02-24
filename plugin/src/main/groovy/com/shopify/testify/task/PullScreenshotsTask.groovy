@@ -11,6 +11,6 @@ class PullScreenshotsTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
-        DeviceUtility.pullScreenshots()
+        new DeviceUtility(project).pullScreenshots()
     }
 }

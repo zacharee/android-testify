@@ -11,7 +11,7 @@ class ShowDeviceKeyTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
-        def deviceKey = DeviceUtility.getDeviceKey()
+        def deviceKey = new DeviceUtility(project).getDeviceKey()
         println "\n\t\"${deviceKey}\""
     }
 }

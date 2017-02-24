@@ -1,13 +1,24 @@
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/shopify/shopify-android/' }
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.shopify.testify:plugin:0.3.1'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'com.shopify.testify'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.shopify.testifysample"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
 
@@ -21,15 +32,23 @@ android {
     }
 }
 
+testify {
+    applicationPackageId = project.android.defaultConfig.applicationId
+    pullWaitTime = 0
+    testRunner = project.android.defaultConfig.testInstrumentationRunner
+    baselineSourceDir = "./app/src/androidTest/assets/screenshots"
+    testContextId = applicationPackageId
+    moduleName = "app"
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:support-v4:25.1.0'
 
-    compile project(':testify')
-    androidTestCompile project(':testify')
-    androidTestCompile "com.android.support:support-annotations:23.1.1"
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.shopify.testify:testify:0.0.7'
+    androidTestCompile "com.android.support:support-annotations:25.1.0"
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }

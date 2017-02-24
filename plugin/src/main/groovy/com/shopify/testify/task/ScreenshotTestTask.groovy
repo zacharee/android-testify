@@ -1,7 +1,8 @@
 package com.shopify.testify.task
 
 import com.shopify.testify.DeviceUtility
-import com.shopify.testify.ProjectWrapper
+import org.gradle.api.Project
+import org.gradle.api.tasks.TaskContainer
 
 class ScreenshotTestTask extends TestifyDefaultTask {
 
@@ -12,27 +13,51 @@ class ScreenshotTestTask extends TestifyDefaultTask {
 
     @Override
     def taskAction() {
-        def testPackage = ProjectWrapper.extension.testPackageId
-        def testRunner = ProjectWrapper.extension.testRunner
+        def shardParams = ""
+        def shardIndex = project.getProperties().get("shardIndex")
+        def shardCount = project.getProperties().get("shardCount")
+        if (shardIndex != null && shardCount != null) {
+            shardParams = "-e numShards ${shardCount} -e shardIndex ${shardIndex}"
+            println "\nRunning test shard ${shardIndex} of ${shardCount}..."
+        }
 
-        def command = [DeviceUtility.getAdbPath(), '-e', 'shell', 'am', 'instrument', '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
-        def log = command.execute().text
-        log.eachLine { line -> println line }
+        def testPackage = project.testify.testPackageId
+        def testRunner = project.testify.testRunner
+
+        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', shardParams, '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
+
+        def log
+        def process = command.execute()
+        process.in.eachLine { line ->
+            println line
+            log += line
+        }
 
         if (!RecordModeTask.isRecordMode && (log.contains("FAILURES!!!") || log.contains("INSTRUMENTATION_CODE: 0") || log.contains("Process crashed while executing"))) {
             throw new Exception("Screenshot tests failed");
         }
 
         if (RecordModeTask.isRecordMode) {
-            DeviceUtility.pullScreenshots();
+            new DeviceUtility(project).pullScreenshots();
         }
     }
 
-    static def addDependencies(ScreenshotTestTask task) {
+    static def addDependencies(Project project) {
+
+        TaskContainer tasks = project.tasks
+        def task = tasks.findByName("screenshotTest")
+
         task.dependsOn "hidePasswords"
-        // TODO: Distinguish between lib and app
-//        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebug"
-//        task.dependsOn ":${ProjectWrapper.extension.moduleName}:installDebugAndroidTest"
-        task.dependsOn ":ShopifyUX:installDebugAndroidTest"
+        task.dependsOn "disableSoftKeyboard"
+
+        def installDebugAndroidTestTask = tasks.findByPath(":${project.testify.moduleName}:installDebugAndroidTest")
+        if (installDebugAndroidTestTask != null) {
+            task.dependsOn installDebugAndroidTestTask
+        }
+
+        def installDebugTask = tasks.findByPath(":${project.testify.moduleName}:installDebug")
+        if (installDebugTask != null) {
+            task.dependsOn installDebugTask
+        }
     }
 }
