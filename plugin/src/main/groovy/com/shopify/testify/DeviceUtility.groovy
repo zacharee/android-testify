@@ -25,7 +25,7 @@ class DeviceUtility {
         def sizeLine = [getAdbPath(), '-e', 'shell', 'wm', 'size']
         def size = sizeLine.execute().text.substring("Physical size: ".length()).trim()
 
-        return "${version}-${size}@${density}dp"
+        return "${version}-${size}@${density}dp-${language()}"
     }
 
     def getDeviceImageDirectory() {
@@ -117,5 +117,15 @@ class DeviceUtility {
 
         new File(tmpFilePath).delete()
         println "."
+    }
+
+    def language() {
+        def lang = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.language']
+        return lang.execute().text
+    }
+
+    def country() {
+        def country = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.country']
+        return country.execute().text
     }
 }

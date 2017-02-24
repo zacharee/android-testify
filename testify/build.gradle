@@ -4,7 +4,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-def VERSION_NAME = '0.0.9'
+def VERSION_NAME = '0.0.10'
 
 android {
     compileSdkVersion 25
