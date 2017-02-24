@@ -8,6 +8,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 public class DeviceIdentifier {
 
@@ -38,6 +39,7 @@ public class DeviceIdentifier {
             }
         }
 
-        return android.os.Build.VERSION.SDK_INT + "-" + realWidth + "x" + realHeight + "@" + metrics.densityDpi + "dp";
+        String language = Locale.getDefault().getLanguage();
+        return android.os.Build.VERSION.SDK_INT + "-" + realWidth + "x" + realHeight + "@" + metrics.densityDpi + "dp-" + language;
     }
 }
