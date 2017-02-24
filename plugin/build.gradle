@@ -1,6 +1,6 @@
 group = 'com.shopify.testify'
 version = '1.0-SNAPSHOT'
-def VERSION_NAME = '0.3.1'
+def VERSION_NAME = '0.3.2'
 
 buildscript {
     repositories {
