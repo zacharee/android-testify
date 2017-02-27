@@ -119,9 +119,9 @@ class DeviceUtility {
         println "."
     }
 
-    def language() {
+    String language() {
         def lang = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.language']
-        return lang.execute().text
+        return lang.execute().text.toString().trim()
     }
 
     def country() {
