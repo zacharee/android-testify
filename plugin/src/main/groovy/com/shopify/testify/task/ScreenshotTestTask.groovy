@@ -49,6 +49,8 @@ class ScreenshotTestTask extends TestifyDefaultTask {
 
         task.dependsOn "hidePasswords"
         task.dependsOn "disableSoftKeyboard"
+        task.dependsOn "showLocale"
+        task.dependsOn "showTimeZone"
 
         def installDebugAndroidTestTask = tasks.findByPath(":${project.testify.moduleName}:installDebugAndroidTest")
         if (installDebugAndroidTestTask != null) {
