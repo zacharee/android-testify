@@ -15,6 +15,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("hidePasswords", HidePasswordsTask.class)
         project.tasks.create("pullScreenshots", PullScreenshotsTask.class)
         project.tasks.create("pullScreenshotsSync", PullScreenshotsSyncTask.class)
+        project.tasks.create("recordBaseline", RecordBaselineTask.class)
         project.tasks.create("recordMode", RecordModeTask.class)
         project.tasks.create("removeDiffImages", RemoveDiffImagesTask.class)
         project.tasks.create("screenshotTest", ScreenshotTestTask.class)
