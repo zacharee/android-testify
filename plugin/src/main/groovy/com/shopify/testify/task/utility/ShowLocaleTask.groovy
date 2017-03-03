@@ -1,12 +1,13 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.utility
 
 import com.shopify.testify.DeviceUtility
+import com.shopify.testify.task.TestifyDefaultTask
 
-class ShowLocaleTask extends TestifyDefaultTask {
+class ShowLocaleTask extends UtilityTask {
 
     @Override
     String getDescription() {
-        return "Print the locale currently set on the emulator"
+        return "Show the locale currently set on the emulator"
     }
 
     @Override

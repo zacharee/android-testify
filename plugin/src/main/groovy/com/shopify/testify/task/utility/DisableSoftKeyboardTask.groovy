@@ -1,8 +1,9 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.utility
 
 import com.shopify.testify.DeviceUtility
+import com.shopify.testify.task.TestifyDefaultTask
 
-class DisableSoftKeyboardTask extends TestifyDefaultTask {
+class DisableSoftKeyboardTask extends UtilityTask {
 
     @Override
     String getDescription() {

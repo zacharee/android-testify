@@ -1,6 +1,6 @@
 group = 'com.shopify.testify'
 version = '1.0-SNAPSHOT'
-def VERSION_NAME = '0.3.3'
+def VERSION_NAME = "$project.coreVersion"
 
 buildscript {
     repositories {
@@ -29,6 +29,14 @@ dependencies {
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+jar {
+    manifest {
+        attributes "Implementation-Title": "Testify"
+        attributes "Implementation-Vendor": "Shopify"
+        attributes "Implementation-Version": VERSION_NAME
+    }
 }
 
 // Params for bintrayUpload

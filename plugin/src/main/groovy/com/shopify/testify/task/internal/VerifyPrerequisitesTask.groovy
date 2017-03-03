@@ -1,6 +1,13 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.internal
+
+import com.shopify.testify.task.TestifyDefaultTask
 
 class VerifyPrerequisitesTask extends TestifyDefaultTask {
+
+    @Override
+    boolean isHidden() {
+        return true
+    }
 
     @Override
     String getDescription() {

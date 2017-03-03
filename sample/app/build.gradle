@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.shopify.testify:plugin:0.3.2'
+        classpath 'com.shopify.testify:plugin:0.4.1'
     }
 }
 
@@ -33,12 +33,13 @@ android {
 }
 
 testify {
-    applicationPackageId = project.android.defaultConfig.applicationId
-    pullWaitTime = 0
-    testRunner = project.android.defaultConfig.testInstrumentationRunner
-    baselineSourceDir = "./app/src/androidTest/assets/screenshots"
-    testContextId = applicationPackageId
     moduleName = "app"
+    applicationPackageId "${project.android.defaultConfig.applicationId}"
+    testContextId "${project.android.defaultConfig.applicationId}"
+    testPackageId "${project.android.defaultConfig.applicationId}.test"
+    testRunner project.android.defaultConfig.testInstrumentationRunner
+    baselineSourceDir "./app/src/androidTest/assets/screenshots"
+    pullWaitTime 0
 }
 
 dependencies {
@@ -48,7 +49,6 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     compile 'com.android.support:support-v4:25.1.0'
 
-    androidTestCompile 'com.shopify.testify:testify:0.0.10'
     androidTestCompile "com.android.support:support-annotations:25.1.0"
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }

@@ -1,10 +1,10 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.utility
 
-class SettingsTask extends TestifyDefaultTask {
+class ShowSettingsTask extends UtilityTask {
 
     @Override
     String getDescription() {
-        return "Show current testify extension settings"
+        return "Show the Testify extension settings"
     }
 
     @Override

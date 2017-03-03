@@ -1,8 +1,14 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.internal
 
 import com.shopify.testify.DeviceUtility
+import com.shopify.testify.task.deprecated.PullScreenshotsTask
 
 class PullScreenshotsSyncTask extends PullScreenshotsTask {
+
+    @Override
+    boolean isHidden() {
+        return true
+    }
 
     @Override
     String getDescription() {
