@@ -22,6 +22,10 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+ext {
+    coreVersion = '0.4.1'
+}
+
 project.ext.preDexLibs = !project.hasProperty('disablePreDex')
 
 subprojects {

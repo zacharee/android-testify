@@ -15,9 +15,12 @@ class DeviceUtility {
         return project.android.getAdbExe().toString()
     }
 
-    def getDeviceKey() {
+    def version() {
         def versionLine = [getAdbPath(), '-e', 'shell', 'getprop', 'ro.build.version.sdk']
-        def version = versionLine.execute().text.trim()
+        return versionLine.execute().text.trim()
+    }
+
+    def getDeviceKey() {
 
         def densityLine = [getAdbPath(), '-e', 'shell', 'wm', 'density']
         def density = densityLine.execute().text.substring("Physical density: ".length()).trim()
@@ -25,7 +28,7 @@ class DeviceUtility {
         def sizeLine = [getAdbPath(), '-e', 'shell', 'wm', 'size']
         def size = sizeLine.execute().text.substring("Physical size: ".length()).trim()
 
-        return "${version}-${size}@${density}dp-${language()}"
+        return "${version()}-${size}@${density}dp-${language()}"
     }
 
     def getDeviceImageDirectory() {
@@ -119,12 +122,25 @@ class DeviceUtility {
         println "."
     }
 
+    String locale() {
+        def command = [getAdbPath(), '-e', 'shell', 'getprop', 'ro.product.locale']
+        return command.execute().text.toString().trim();
+    }
+
     String language() {
+        if (Integer.parseInt(version()) > 21) {
+            String locale = locale()
+            return locale.substring(0, locale.indexOf('-'))
+        }
         def lang = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.language']
         return lang.execute().text.toString().trim()
     }
 
     def country() {
+        if (Integer.parseInt(version()) > 21) {
+            String locale = locale()
+            return locale.substring(locale.indexOf('-') + 1)
+        }
         def country = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.country']
         return country.execute().text
     }
