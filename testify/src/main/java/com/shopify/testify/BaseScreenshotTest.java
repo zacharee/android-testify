@@ -44,14 +44,17 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @SuppressWarnings("unused")
-public abstract class BaseScreenshotTest {
+public abstract class BaseScreenshotTest<T> {
 
     protected static final int NO_ID = -1;
     private static final long INFLATE_TIMEOUT_SECONDS = 5;
     private ViewModification viewModification;
     private EspressoActions espressoActions;
-    @LayoutRes private int layoutId;
+    @LayoutRes protected int layoutId;
     private boolean hideSoftKeyboard = true;
+
+    BaseScreenshotTest() {
+    }
 
     public BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
@@ -63,19 +66,21 @@ public abstract class BaseScreenshotTest {
 
     protected abstract Activity getActivity();
 
-    public BaseScreenshotTest setViewModifications(ViewModification viewModification) {
+    protected abstract T getThis();
+
+    public T setViewModifications(ViewModification viewModification) {
         this.viewModification = viewModification;
-        return this;
+        return getThis();
     }
 
-    public BaseScreenshotTest setEspressoActions(EspressoActions espressoActions) {
+    public T setEspressoActions(EspressoActions espressoActions) {
         this.espressoActions = espressoActions;
-        return this;
+        return getThis();
     }
 
-    public BaseScreenshotTest setHideSoftKeyboard(boolean hideSoftKeyboard) {
+    public T setHideSoftKeyboard(boolean hideSoftKeyboard) {
         this.hideSoftKeyboard = hideSoftKeyboard;
-        return this;
+        return getThis();
     }
 
     @IdRes

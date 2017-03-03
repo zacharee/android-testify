@@ -34,7 +34,7 @@ import android.view.View;
 import static junit.framework.Assert.assertNotNull;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ScreenshotTest extends BaseScreenshotTest {
+public class ScreenshotTest extends BaseScreenshotTest<ScreenshotTest> {
 
     private ActivityInstrumentationTestCase2 testCase;
 
@@ -60,6 +60,11 @@ public class ScreenshotTest extends BaseScreenshotTest {
     @Override
     protected Activity getActivity() {
         return testCase.getActivity();
+    }
+
+    @Override
+    protected ScreenshotTest getThis() {
+        return this;
     }
 
     @IdRes
