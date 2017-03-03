@@ -1,4 +1,6 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.internal
+
+import com.shopify.testify.task.TestifyDefaultTask
 
 class RecordModeTask extends TestifyDefaultTask {
 
@@ -9,8 +11,13 @@ class RecordModeTask extends TestifyDefaultTask {
     static boolean isRecordMode = false;
 
     @Override
+    boolean isHidden() {
+        return true
+    }
+
+    @Override
     String getDescription() {
-        return "Enable baseline image recording."
+        return "[DEPRECATED] Enable baseline image recording."
     }
 
     @Override

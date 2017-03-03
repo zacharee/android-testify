@@ -1,6 +1,8 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.testify
 
 import com.shopify.testify.DeviceUtility
+import com.shopify.testify.task.TestifyDefaultTask
+import com.shopify.testify.task.internal.RecordModeTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
 

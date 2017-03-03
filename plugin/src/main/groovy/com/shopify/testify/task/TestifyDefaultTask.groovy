@@ -7,7 +7,15 @@ abstract class TestifyDefaultTask extends DefaultTask {
 
     @Override
     String getGroup() {
-        return "Testify"
+        return isHidden() ? "" : "Testify";
+    }
+
+    boolean isHidden() {
+        return false
+    }
+
+    boolean isDeprecated() {
+        return false
     }
 
     @TaskAction

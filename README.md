@@ -8,23 +8,7 @@
 ### Set Up
 
 
-Add to your build.gradle:
-
-```
-apply from: 'screenshot.gradle'
-
-android {
-    defaultConfig {
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-}
-
-dependencies {
-    androidTestCompile 'com.shopify.testify:testify:0.0.6'
-    androidTestCompile "com.android.support:support-annotations:23.3.0"
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-}
-```
+To use Testify, you need to add the Testify plugin to your `build.gradle`:
 
 ```
 buildscript {
@@ -32,20 +16,34 @@ buildscript {
         maven { url 'http://dl.bintray.com/shopify/shopify-android/' }
     }
     dependencies {
-        classpath 'com.shopify.testify:plugin:0.0.7'
+        classpath 'com.shopify.testify:plugin:0.4.1'
     }
 }
-
 apply plugin: 'com.shopify.testify'
+```
 
-testifySettings {
-    applicationPackageId = project.android.defaultConfig.applicationId
-    pullWaitTime = 0
-    testRunner = project.android.defaultConfig.testInstrumentationRunner
-    baselineSourceDir = "./ShopifyUX/src/androidTest/assets/screenshots"
-    moduleName = "ShopifyUX"
+You must also configure the Testify plugin settings by adding a `testify` block to your `build.gradle`:
+
+```
+testify {
+    moduleName "app"
+    applicationPackageId "com.example.myapp"
+    testContextId "com.example.myapp.debug"
+    testPackageId "com.example.myapp.test"
+    testRunner "android.support.test.runner.AndroidJUnitRunner"
+    baselineSourceDir "./app/src/androidTest/assets/screenshots"
+    pullWaitTime 0
 }
 ```
+
+- `moduleName` : [REQUIRED] The name of your application module. By default this is `app`
+- `applicationPackageId`: [REQUIRED] Your application package name. ex. `com.example.myapp`
+- `testContextId`: [OPTIONAL] The package name for the Context of the application being tested. This is used to find the baseline images when running tests. This is typically the same as your application package id.
+- `testPackageId`: [OPTIONAL] The package name for your test pacakge. ex. `com.example.myapp.test`
+- `testRunner`: [OPTIONAL] Fully qualified name for any custom test runner you're using. Defaults to `android.support.test.runner.AndroidJUnitRunner`
+- `baselineSourceDir`: [REQUIRED] The relative path to your screenshot assets.
+- `pullWaitTime`: [OPTIONAL] The amount of time in milliseconds to wait for files to copy locally. Defaults to `0`.
+
 ### How to run a single test
 
 Take the following test code:

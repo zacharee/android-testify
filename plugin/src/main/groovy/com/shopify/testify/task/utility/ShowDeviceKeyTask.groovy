@@ -1,12 +1,12 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.utility
 
 import com.shopify.testify.DeviceUtility
 
-class ShowDeviceKeyTask extends TestifyDefaultTask {
+class ShowDeviceKeyTask extends UtilityTask {
 
     @Override
     String getDescription() {
-        return "Display the device key for the current emulator. Format: {api_version}-{width_in_pixels}x{height_in_pixels}@{dpi}-{language}"
+        return "Show the device key for the current emulator. Format: {api_version}-{width_in_pixels}x{height_in_pixels}@{dpi}-{language}"
     }
 
     @Override
