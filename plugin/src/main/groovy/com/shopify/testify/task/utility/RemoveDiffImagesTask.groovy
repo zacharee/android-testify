@@ -1,8 +1,8 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.utility
 
 import com.shopify.testify.DeviceUtility
 
-class RemoveDiffImagesTask extends TestifyDefaultTask {
+class RemoveDiffImagesTask extends UtilityTask {
 
     @Override
     String getDescription() {

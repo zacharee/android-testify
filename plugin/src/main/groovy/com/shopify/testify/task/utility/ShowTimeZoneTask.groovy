@@ -1,12 +1,12 @@
-package com.shopify.testify.task
+package com.shopify.testify.task.utility
 
 import com.shopify.testify.DeviceUtility
 
-class ShowTimeZoneTask extends TestifyDefaultTask {
+class ShowTimeZoneTask extends UtilityTask {
 
     @Override
     String getDescription() {
-        return "Shows the emulator time zone"
+        return "Show the time zone on the emulator"
     }
 
     @Override

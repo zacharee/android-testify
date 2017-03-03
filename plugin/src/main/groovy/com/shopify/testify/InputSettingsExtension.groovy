@@ -5,11 +5,18 @@ import org.gradle.api.Project
 class InputSettingsExtension {
     String applicationPackageId
     String testPackageId
-    long pullWaitTime
+    long pullWaitTime = 0
     String testRunner
     String baselineSourceDir
     String moduleName;
     String testContextId
+
+    String getTestRunner() {
+        if (testRunner == null) {
+            testRunner = "android.support.test.runner.AndroidJUnitRunner"
+        }
+        return testRunner
+    }
 
     String getTestContextId() {
         if (testContextId == null) {
