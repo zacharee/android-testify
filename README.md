@@ -46,6 +46,44 @@ testifySettings {
     moduleName = "ShopifyUX"
 }
 ```
+### How to run a single test
+
+Take the following test code:
+
+```
+package com.shopify.testifysample;
+
+import com.shopify.testify.ScreenshotTest;
+import com.shopify.testify.ScreenshotTestCase;
+
+public class BasicTests extends ScreenshotTestCase<TestHarnessActivity> {
+
+    public BasicTests() {
+        super(TestHarnessActivity.class, R.id.component_placeholder);
+    }
+
+    public void testBootstrap() throws Exception {
+        new ScreenshotTest(this, R.layout.test_bootstrap).assertSame();
+    }
+
+    public void testMainActivity() throws Exception {
+        new ScreenshotTest(this, R.layout.activity_main).assertSame();
+    }
+}
+```
+
+If you wanted to run a single test, you can use the following command:
+
+`./gradlew screenshotTest -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
+
+Similarly, you can run & record the test in one step using:
+
+`./gradlew recordBaseline -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
+
+You can also shorten the syntax slightly to:
+
+`./gradlew recordBaseline -PtestClass=com.shopify.testifysample.BasicTests#testBootstrap`
+
 
 ### TODO:
 

@@ -144,4 +144,10 @@ class DeviceUtility {
         def country = [getAdbPath(), '-e', 'shell', 'getprop', 'persist.sys.country']
         return country.execute().text
     }
+
+    def clearScreenshots() {
+        def command = [getAdbPath(), '-e', 'shell', 'rm', getDeviceImageDirectory() + "*.png"]
+        def process = command.execute()
+        process.in.eachLine { line -> println line }
+    }
 }

@@ -11,8 +11,32 @@ class ScreenshotTestTask extends TestifyDefaultTask {
         return "Run the screenshot tests"
     }
 
-    @Override
-    def taskAction() {
+    def getTestTarget() {
+        def testClass = project.getProperties().get("testClass")
+
+        def testTarget = ""
+        if (testClass != null && testClass != "") {
+            testTarget = "-e class " + testClass
+            def testName = project.getProperties().get("testName")
+            if (testName != null && testName != "") {
+                testTarget += "#" + testName
+            }
+        }
+
+        return testTarget
+    }
+
+    static def runAndLog(command) {
+        def log
+        def process = command.execute()
+        process.in.eachLine { line ->
+            println line
+            log += line
+        }
+        return log
+    }
+
+    private def getShardParams() {
         def shardParams = ""
         def shardIndex = project.getProperties().get("shardIndex")
         def shardCount = project.getProperties().get("shardCount")
@@ -20,18 +44,22 @@ class ScreenshotTestTask extends TestifyDefaultTask {
             shardParams = "-e numShards ${shardCount} -e shardIndex ${shardIndex}"
             println "\nRunning test shard ${shardIndex} of ${shardCount}..."
         }
+        return shardParams
+    }
 
+    @Override
+    def taskAction() {
+        def shardParams = getShardParams()
         def testPackage = project.testify.testPackageId
         def testRunner = project.testify.testRunner
+        def testTarget = getTestTarget()
 
-        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', shardParams, '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
-
-        def log
-        def process = command.execute()
-        process.in.eachLine { line ->
-            println line
-            log += line
+        if (RecordModeTask.isRecordMode) {
+            new DeviceUtility(project).clearScreenshots()
         }
+
+        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', shardParams, testTarget, '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
+        def log = runAndLog(command)
 
         if (!RecordModeTask.isRecordMode && (log.contains("FAILURES!!!") || log.contains("INSTRUMENTATION_CODE: 0") || log.contains("Process crashed while executing"))) {
             throw new Exception("Screenshot tests failed");
