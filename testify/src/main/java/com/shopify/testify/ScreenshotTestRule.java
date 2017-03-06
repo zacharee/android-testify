@@ -21,6 +21,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
     private String testName;
     private Throwable throwable;
     private BaseScreenshotTest.EspressoActions espressoActions;
+    private BaseScreenshotTest.ViewModification viewModification;
 
     public ScreenshotTestRule(Class<T> activityClass) {
         super(activityClass);
@@ -46,9 +47,15 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         return this;
     }
 
+    public ScreenshotTestRule setViewModifications(BaseScreenshotTest.ViewModification viewModification) {
+        this.viewModification = viewModification;
+        return this;
+    }
+
     private void afterTestStatement() {
         ScreenshotTest screenshotTest = new ScreenshotTest(layoutId);
         try {
+            screenshotTest.setViewModifications(viewModification);
             screenshotTest.setEspressoActions(espressoActions);
             screenshotTest.assertSame();
             int a = 0;

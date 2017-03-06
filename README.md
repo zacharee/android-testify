@@ -92,6 +92,10 @@ You can also shorten the syntax slightly to:
 
 ### How to build?
 
+#### How to build for local development
+
+`./gradlew install publishToMavenLocal`
+
 #### Plugin:
 
 - Visit https://bintray.com/profile/edit
@@ -102,6 +106,14 @@ You can also shorten the syntax slightly to:
 - `./gradlew :plugin:bintrayUpload`
 
 Note: You might need to bump the `VERSION_NAME` in `./plugin/build.gradle`
+
+### Troubleshooting
+
+#### `screenshotPull` is not working
+
+Check that you have root access to your emulator.
+Run `adb root` if necessary.
+
 
 ### How Can I Contribute?
 

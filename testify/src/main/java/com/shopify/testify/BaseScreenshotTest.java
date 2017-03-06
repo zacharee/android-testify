@@ -44,16 +44,16 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 @SuppressWarnings("unused")
-public abstract class BaseScreenshotTest<T> {
+abstract class BaseScreenshotTest<T> {
 
-    protected static final int NO_ID = -1;
+    static final int NO_ID = -1;
     private static final long INFLATE_TIMEOUT_SECONDS = 5;
     private ViewModification viewModification;
     private EspressoActions espressoActions;
-    @LayoutRes protected int layoutId;
+    @LayoutRes private int layoutId;
     private boolean hideSoftKeyboard = true;
 
-    public BaseScreenshotTest(@LayoutRes int layoutId) {
+    BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
     }
 
@@ -65,11 +65,13 @@ public abstract class BaseScreenshotTest<T> {
 
     protected abstract T getThis();
 
+    @SuppressWarnings("WeakerAccess")
     public T setViewModifications(ViewModification viewModification) {
         this.viewModification = viewModification;
         return getThis();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public T setEspressoActions(EspressoActions espressoActions) {
         this.espressoActions = espressoActions;
         return getThis();
@@ -137,11 +139,14 @@ public abstract class BaseScreenshotTest<T> {
         }
     }
 
+    // TODO: Move to top-level to simplify import
+    @SuppressWarnings("WeakerAccess")
     public interface ViewModification {
 
         void modifyView(ViewGroup rootView);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public interface EspressoActions {
 
         void performEspressoActions();

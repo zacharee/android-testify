@@ -23,7 +23,9 @@
  */
 package com.shopify.testifysample;
 
-import com.shopify.testify.BaseScreenshotTest;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
+
 import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestCase;
 
@@ -47,10 +49,21 @@ public class SampleJUnit3Tests extends ScreenshotTestCase<TestHarnessActivity> {
 
     public void testEspressoActions() throws Exception {
         new ScreenshotTest(this, R.layout.test_sample)
-                .setEspressoActions(new BaseScreenshotTest.EspressoActions() {
+                .setEspressoActions(new ScreenshotTest.EspressoActions() {
                     @Override
                     public void performEspressoActions() {
                         onView(withId(R.id.checkBox)).perform(click());
+                    }
+                })
+                .assertSame();
+    }
+
+    public void testViewModifications() throws Exception {
+        new ScreenshotTest(this, R.layout.test_sample)
+                .setViewModifications(new ScreenshotTest.ViewModification() {
+                    @Override
+                    public void modifyView(ViewGroup rootView) {
+                        ((RadioButton) rootView.findViewById(R.id.radioButton)).setChecked(true);
                     }
                 })
                 .assertSame();

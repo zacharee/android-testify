@@ -1,8 +1,10 @@
 package com.shopify.testifysample;
 
 import android.support.test.runner.AndroidJUnit4;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
 
-import com.shopify.testify.BaseScreenshotTest;
+import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestRule;
 import com.shopify.testify.annotation.TestifyLayout;
 
@@ -33,10 +35,21 @@ public class SampleJUnit4Tests {
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
     public void usingEspresso() throws Exception {
-        screenshotTestRule.setEspressoActions(new BaseScreenshotTest.EspressoActions() {
+        screenshotTestRule.setEspressoActions(new ScreenshotTest.EspressoActions() {
             @Override
             public void performEspressoActions() {
                 onView(withId(R.id.checkBox)).perform(click());
+            }
+        });
+    }
+
+    @Test
+    @TestifyLayout(layoutId = R.layout.test_sample)
+    public void withViewModifications() throws Exception {
+        screenshotTestRule.setViewModifications(new ScreenshotTest.ViewModification() {
+            @Override
+            public void modifyView(ViewGroup rootView) {
+                ((RadioButton) rootView.findViewById(R.id.radioButton)).setChecked(true);
             }
         });
     }
