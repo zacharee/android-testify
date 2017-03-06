@@ -16,7 +16,7 @@ public class SampleJUnit4Tests {
     public final ScreenshotTestRule<TestHarnessActivity> screenshotTestRule = new ScreenshotTestRule<>(TestHarnessActivity.class);
 
     @Test
-    @TestifyLayout(layoutId = R.layout.test_bootstrap)
+    @TestifyLayout(layoutId = R.layout.test_sample)
     public void ruleUsingAnnotation() throws Exception {
     }
 

@@ -27,18 +27,32 @@ import com.shopify.testify.BaseScreenshotTest;
 import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestCase;
 
-public class BasicTests extends ScreenshotTestCase<TestHarnessActivity> {
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
-    public BasicTests() {
+public class SampleJUnit3Tests extends ScreenshotTestCase<TestHarnessActivity> {
+
+    public SampleJUnit3Tests() {
         super(TestHarnessActivity.class, R.id.component_placeholder);
     }
 
-    public void testBootstrap() throws Exception {
-        new ScreenshotTest(this, R.layout.test_bootstrap).assertSame();
+    public void testDefault() throws Exception {
+        new ScreenshotTest(this, R.layout.test_sample).assertSame();
     }
 
     public void testMainActivity() throws Exception {
         new ScreenshotTest(this, R.layout.activity_main).assertSame();
     }
 
+    public void testEspressoActions() throws Exception {
+        new ScreenshotTest(this, R.layout.test_sample)
+                .setEspressoActions(new BaseScreenshotTest.EspressoActions() {
+                    @Override
+                    public void performEspressoActions() {
+                        onView(withId(R.id.checkBox)).perform(click());
+                    }
+                })
+                .assertSame();
+    }
 }
