@@ -17,6 +17,11 @@ public class SampleJUnit4Tests {
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_bootstrap)
-    public void bootstrap() throws Exception {
+    public void ruleUsingAnnotation() throws Exception {
+    }
+
+    @Test
+    public void ruleUsingSetter() throws Exception {
+        screenshotTestRule.setLayoutId(R.layout.activity_main);
     }
 }

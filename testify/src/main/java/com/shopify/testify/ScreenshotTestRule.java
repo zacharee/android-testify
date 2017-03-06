@@ -17,8 +17,8 @@ import org.junit.runners.model.Statement;
 public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> implements TestRule {
 
     private String testName;
-    private ScreenshotTest screenshotTest;
     private Throwable throwable;
+    @LayoutRes private int layoutId;
 
     public ScreenshotTestRule(Class<T> activityClass) {
         super(activityClass);
@@ -28,9 +28,14 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
     public Statement apply(Statement base, Description description) {
         testName = description.getTestClass().getSimpleName() + "_" + description.getMethodName();
         TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
-        screenshotTest = new ScreenshotTest(testifyLayout.layoutId());
+        if (testifyLayout != null) {
+            layoutId = testifyLayout.layoutId();
+        }
+        return new ScreenshotStatement(super.apply(new BaseInterceptorStatement(base), description));
+    }
 
-        return new ScreenshotStatement(super.apply(base, description));
+    public void setLayoutId(@LayoutRes int layoutId) {
+        this.layoutId = layoutId;
     }
 
     @Override
@@ -38,12 +43,28 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         throwable = null;
     }
 
-    @Override
-    protected void afterActivityLaunched() {
+    private void afterTestStatement() {
+        ScreenshotTest screenshotTest = new ScreenshotTest(layoutId);
         try {
             screenshotTest.assertSame();
+            int a = 0;
         } catch (Throwable throwable) {
             this.throwable = throwable;
+        }
+    }
+
+    private class BaseInterceptorStatement extends Statement {
+
+        private final Statement base;
+
+        public BaseInterceptorStatement(Statement base) {
+            this.base = base;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            base.evaluate();
+            afterTestStatement();
         }
     }
 

@@ -23,6 +23,7 @@
  */
 package com.shopify.testifysample;
 
+import com.shopify.testify.BaseScreenshotTest;
 import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestCase;
 
@@ -39,4 +40,5 @@ public class BasicTests extends ScreenshotTestCase<TestHarnessActivity> {
     public void testMainActivity() throws Exception {
         new ScreenshotTest(this, R.layout.activity_main).assertSame();
     }
+
 }
