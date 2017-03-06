@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
+import android.view.View;
 
 import com.shopify.testify.annotation.TestifyLayout;
 
@@ -16,9 +17,10 @@ import org.junit.runners.model.Statement;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> implements TestRule {
 
+    @LayoutRes private int layoutId;
     private String testName;
     private Throwable throwable;
-    @LayoutRes private int layoutId;
+    private BaseScreenshotTest.EspressoActions espressoActions;
 
     public ScreenshotTestRule(Class<T> activityClass) {
         super(activityClass);
@@ -26,26 +28,28 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
 
     @Override
     public Statement apply(Statement base, Description description) {
+        throwable = null;
+        espressoActions = null;
         testName = description.getTestClass().getSimpleName() + "_" + description.getMethodName();
-        TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
-        if (testifyLayout != null) {
-            layoutId = testifyLayout.layoutId();
-        }
+        final TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
+        layoutId = (testifyLayout != null) ? testifyLayout.layoutId() : View.NO_ID;
         return new ScreenshotStatement(super.apply(new BaseInterceptorStatement(base), description));
     }
 
-    public void setLayoutId(@LayoutRes int layoutId) {
+    public ScreenshotTestRule setLayoutId(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
+        return this;
     }
 
-    @Override
-    protected void beforeActivityLaunched() {
-        throwable = null;
+    public ScreenshotTestRule setEspressoActions(BaseScreenshotTest.EspressoActions espressoActions) {
+        this.espressoActions = espressoActions;
+        return this;
     }
 
     private void afterTestStatement() {
         ScreenshotTest screenshotTest = new ScreenshotTest(layoutId);
         try {
+            screenshotTest.setEspressoActions(espressoActions);
             screenshotTest.assertSame();
             int a = 0;
         } catch (Throwable throwable) {
