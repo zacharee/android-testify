@@ -6,54 +6,92 @@ import android.support.annotation.LayoutRes;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 
+import com.shopify.testify.annotation.TestifyLayout;
+
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 // Consider subclassing ActivityTestRule
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ScreenshotTestRule extends BaseScreenshotTest<ScreenshotTestRule> implements TestRule {
+public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> implements TestRule {
 
-    private final ActivityTestRule<?> activityTestRule;
     private String testName;
+    private ScreenshotTest screenshotTest;
+    private Throwable throwable;
 
-    public ScreenshotTestRule(ActivityTestRule<?> activityTestRule) {
-        this.activityTestRule = activityTestRule;
+    public ScreenshotTestRule(Class<T> activityClass) {
+        super(activityClass);
     }
 
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(Statement base, Description description) {
         testName = description.getTestClass().getSimpleName() + "_" + description.getMethodName();
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
+        TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
+        screenshotTest = new ScreenshotTest(testifyLayout.layoutId());
+
+        return new ScreenshotStatement(super.apply(base, description));
+    }
+
+    @Override
+    protected void beforeActivityLaunched() {
+        throwable = null;
+    }
+
+    @Override
+    protected void afterActivityLaunched() {
+        try {
+            screenshotTest.assertSame();
+        } catch (Throwable throwable) {
+            this.throwable = throwable;
+        }
+    }
+
+    private class ScreenshotStatement extends Statement {
+
+        private final Statement base;
+
+        public ScreenshotStatement(Statement base) {
+            this.base = base;
+        }
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
                 base.evaluate();
+            } catch (Throwable ignored) {
+            } finally {
+                if (throwable != null) {
+                    throw throwable;
+                }
             }
-        };
+        }
     }
 
-    public ScreenshotTestRule withLayout(@LayoutRes int layoutId) {
-        this.layoutId = layoutId;
-        return this;
-    }
+    private class ScreenshotTest extends BaseScreenshotTest<ScreenshotTest> {
 
-    @Override
-    protected String getTestName() {
-        return testName;
-    }
+        public ScreenshotTest(@LayoutRes int layoutId) {
+            super(layoutId);
+        }
 
-    @Override
-    protected Context getTestContext() {
-        return InstrumentationRegistry.getContext();
-    }
+        @Override
+        protected String getTestName() {
+            return testName;
+        }
 
-    @Override
-    protected Activity getActivity() {
-        return activityTestRule.getActivity();
-    }
+        @Override
+        protected Context getTestContext() {
+            return InstrumentationRegistry.getContext();
+        }
 
-    @Override
-    protected ScreenshotTestRule getThis() {
-        return this;
+        @Override
+        protected Activity getActivity() {
+            return ScreenshotTestRule.this.getActivity();
+        }
+
+        @Override
+        protected ScreenshotTest getThis() {
+            return this;
+        }
     }
 }

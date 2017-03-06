@@ -1,9 +1,9 @@
 package com.shopify.testifysample;
 
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.shopify.testify.ScreenshotTestRule;
+import com.shopify.testify.annotation.TestifyLayout;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,13 +13,10 @@ import org.junit.runner.RunWith;
 public class SampleJUnit4Tests {
 
     @Rule
-    public final ActivityTestRule<TestHarnessActivity> activityTestRule = new ActivityTestRule<>(TestHarnessActivity.class);
-
-    @Rule
-    public final ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(activityTestRule);
+    public final ScreenshotTestRule<TestHarnessActivity> screenshotTestRule = new ScreenshotTestRule<>(TestHarnessActivity.class);
 
     @Test
+    @TestifyLayout(layoutId = R.layout.test_bootstrap)
     public void bootstrap() throws Exception {
-        screenshotTestRule.withLayout(R.layout.test_bootstrap).assertSame();
     }
 }

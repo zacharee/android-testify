@@ -53,9 +53,6 @@ public abstract class BaseScreenshotTest<T> {
     @LayoutRes protected int layoutId;
     private boolean hideSoftKeyboard = true;
 
-    BaseScreenshotTest() {
-    }
-
     public BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
     }
