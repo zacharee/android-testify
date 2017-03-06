@@ -68,7 +68,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
 
         private final Statement base;
 
-        public BaseInterceptorStatement(Statement base) {
+        BaseInterceptorStatement(Statement base) {
             this.base = base;
         }
 
@@ -83,7 +83,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
 
         private final Statement base;
 
-        public ScreenshotStatement(Statement base) {
+        ScreenshotStatement(Statement base) {
             this.base = base;
         }
 
@@ -102,7 +102,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
 
     private class ScreenshotTest extends BaseScreenshotTest<ScreenshotTest> {
 
-        public ScreenshotTest(@LayoutRes int layoutId) {
+        ScreenshotTest(@LayoutRes int layoutId) {
             super(layoutId);
         }
 
