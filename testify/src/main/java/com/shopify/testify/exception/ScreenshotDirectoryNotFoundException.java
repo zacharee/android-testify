@@ -6,6 +6,7 @@ package com.shopify.testify.exception;
  */
 public class ScreenshotDirectoryNotFoundException extends Exception {
 
+    // TODO: This needs to be generic
     public ScreenshotDirectoryNotFoundException(String path) {
         super("\n\n* Could not find path {" + path + "}.\n" +
               "* Check that your emulator has an SD card image and try again.\n" +

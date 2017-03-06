@@ -82,15 +82,71 @@ You can also shorten the syntax slightly to:
 
 `./gradlew recordBaseline -PtestClass=com.shopify.testifysample.BasicTests#testBootstrap`
 
+### How to write a test
 
-### TODO:
+#### JUnit3
 
-- update for `testify` extensions
-- document all the tasks
-- show how to build locally
-- demonstrate sharding
+```
+public class SampleJUnit3Tests extends ScreenshotTestCase<MyActivity> {
+
+    public SampleJUnit3Tests() {
+        super(MyActivity.class, R.id.root_view);
+    }
+
+    public void testScreenshot() throws Exception {
+        new ScreenshotTest(this, R.layout.test_sample)
+                .setViewModifications(new ScreenshotTest.ViewModification() {
+                    @Override
+                    public void modifyView(ViewGroup rootView) {
+                        ((RadioButton) rootView.findViewById(R.id.radioButton)).setChecked(true);
+                    }
+                })
+                .setEspressoActions(new ScreenshotTest.EspressoActions() {
+                    @Override
+                    public void performEspressoActions() {
+                        onView(withId(R.id.checkBox)).perform(click());
+                    }
+                })
+                .assertSame();
+    }
+}
+```
+
+#### JUnit4
+
+```
+@RunWith(AndroidJUnit4.class)
+public class SampleJUnit4Tests {
+
+    @Rule
+    public final ScreenshotTestRule<MyActivity> screenshotTestRule = new ScreenshotTestRule<>(MyActivity.class);
+
+    @Test
+    @TestifyLayout(layoutId = R.layout.test_sample)
+    public void screenshot() throws Exception {
+        screenshotTestRule
+                .setEspressoActions(new ScreenshotTest.EspressoActions() {
+                    @Override
+                    public void performEspressoActions() {
+                        onView(withId(R.id.checkBox)).perform(click());
+                    }
+                })
+                .setViewModifications(new ScreenshotTest.ViewModification() {
+                    @Override
+                    public void modifyView(ViewGroup rootView) {
+                        ((RadioButton) rootView.findViewById(R.id.radioButton)).setChecked(true);
+                    }
+                });
+    }
+}
+
+```
 
 ### How to build?
+
+#### How to build for local development
+
+`./gradlew install publishToMavenLocal`
 
 #### Plugin:
 
@@ -102,6 +158,20 @@ You can also shorten the syntax slightly to:
 - `./gradlew :plugin:bintrayUpload`
 
 Note: You might need to bump the `VERSION_NAME` in `./plugin/build.gradle`
+
+### Troubleshooting
+
+#### `screenshotPull` is not working
+
+Check that you have root access to your emulator.
+Run `adb root` if necessary.
+
+### TODO:
+
+- update for `testify` extensions
+- document all the tasks
+- show how to build locally
+- demonstrate sharding
 
 ### How Can I Contribute?
 
