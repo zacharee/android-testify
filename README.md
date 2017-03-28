@@ -76,11 +76,11 @@ If you wanted to run a single test, you can use the following command:
 
 Similarly, you can run & record the test in one step using:
 
-`./gradlew recordBaseline -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
+`./gradlew screenshotRecord -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
 
 You can also shorten the syntax slightly to:
 
-`./gradlew recordBaseline -PtestClass=com.shopify.testifysample.BasicTests#testBootstrap`
+`./gradlew screenshotRecord -PtestClass=com.shopify.testifysample.BasicTests#testBootstrap`
 
 ### How to write a test
 
