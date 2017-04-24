@@ -41,7 +41,10 @@ class Plugin implements org.gradle.api.Plugin<Project> {
 
         project.afterEvaluate {
             InputSettingsExtension.validate(project)
-            ScreenshotTestTask.addDependencies(project)
+
+            project.tasks.findByName("screenshotTest").addDependencies(project);
+            project.tasks.findByName("screenshotRecord").addDependencies(project);
+
             GenerateDiffImagesTask.addDependencies(project)
         }
 
