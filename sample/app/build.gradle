@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.shopify.testify:plugin:0.4.1'
+        classpath 'com.shopify.testify:plugin:0.5.1'
     }
 }
 
