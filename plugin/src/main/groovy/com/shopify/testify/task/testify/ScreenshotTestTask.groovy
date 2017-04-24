@@ -4,7 +4,6 @@ import com.shopify.testify.DeviceUtility
 import com.shopify.testify.task.TestifyDefaultTask
 import com.shopify.testify.task.internal.RecordModeTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskContainer
 
 class ScreenshotTestTask extends TestifyDefaultTask {
 
@@ -72,24 +71,22 @@ class ScreenshotTestTask extends TestifyDefaultTask {
         }
     }
 
-    static def addDependencies(Project project) {
+    def addDependencies(Project project) {
+        def tasks = project.tasks
 
-        TaskContainer tasks = project.tasks
-        def task = tasks.findByName("screenshotTest")
-
-        task.dependsOn "hidePasswords"
-        task.dependsOn "disableSoftKeyboard"
-        task.dependsOn "showLocale"
-        task.dependsOn "showTimeZone"
+        this.dependsOn "hidePasswords"
+        this.dependsOn "disableSoftKeyboard"
+        this.dependsOn "showLocale"
+        this.dependsOn "showTimeZone"
 
         def installDebugAndroidTestTask = tasks.findByPath(":${project.testify.moduleName}:installDebugAndroidTest")
         if (installDebugAndroidTestTask != null) {
-            task.dependsOn installDebugAndroidTestTask
+            this.dependsOn installDebugAndroidTestTask
         }
 
         def installDebugTask = tasks.findByPath(":${project.testify.moduleName}:installDebug")
         if (installDebugTask != null) {
-            task.dependsOn installDebugTask
+            this.dependsOn installDebugTask
         }
     }
 }
