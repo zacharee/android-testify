@@ -29,11 +29,15 @@ import android.widget.RadioButton;
 import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestCase;
 
+import java.util.Locale;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class SampleJUnit3Tests extends ScreenshotTestCase<TestHarnessActivity> {
+
+    private Locale defaultLocale;
 
     public SampleJUnit3Tests() {
         super(TestHarnessActivity.class, R.id.component_placeholder);
@@ -45,6 +49,12 @@ public class SampleJUnit3Tests extends ScreenshotTestCase<TestHarnessActivity> {
 
     public void testMainActivity() throws Exception {
         new ScreenshotTest(this, R.layout.activity_main).assertSame();
+    }
+
+    public void testFrenchMainActivity() throws Exception {
+        new ScreenshotTest(this, R.layout.activity_main)
+                .setLocale(Locale.FRANCE)
+                .assertSame();
     }
 
     public void testEspressoActions() throws Exception {
