@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
 import com.shopify.testify.exception.ScreenshotIsDifferentException;
 
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +53,7 @@ abstract class BaseScreenshotTest<T> {
     private EspressoActions espressoActions;
     @LayoutRes private int layoutId;
     private boolean hideSoftKeyboard = true;
+    private Locale defaultLocale = null;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
@@ -79,6 +81,19 @@ abstract class BaseScreenshotTest<T> {
 
     public T setHideSoftKeyboard(boolean hideSoftKeyboard) {
         this.hideSoftKeyboard = hideSoftKeyboard;
+        return getThis();
+    }
+
+    /**
+     * Sets the default locale for this test case.
+     * {@link #assertSame()} will reset the locale on completion.
+     *
+     * @param newLocale the new default locale
+     * @return ScreenshotTest instance builder
+     */
+    public T setLocale(Locale newLocale) {
+        defaultLocale = Locale.getDefault();
+        LocaleHelper.setTestLocale(newLocale);
         return getThis();
     }
 
@@ -110,32 +125,40 @@ abstract class BaseScreenshotTest<T> {
     }
 
     public void assertSame() throws Exception {
-        final Activity activity = getActivity();
-        initializeView(activity);
+        try {
+            final Activity activity = getActivity();
+            initializeView(activity);
 
-        if (espressoActions != null) {
-            espressoActions.performEspressoActions();
-        }
+            if (espressoActions != null) {
+                espressoActions.performEspressoActions();
+            }
 
-        if (hideSoftKeyboard) {
-            Espresso.onView(withId(getRootViewId())).perform(ViewActions.closeSoftKeyboard());
-        }
+            if (hideSoftKeyboard) {
+                Espresso.onView(withId(getRootViewId())).perform(ViewActions.closeSoftKeyboard());
+            }
 
-        final String testName = getTestName();
-        final ScreenshotUtility screenshotUtility = new ScreenshotUtility();
-        Bitmap currentBitmap = screenshotUtility.createBitmapFromActivity(activity, testName);
-        assertNotNull("Failed to capture bitmap from activity", currentBitmap);
+            final String testName = getTestName();
+            final ScreenshotUtility screenshotUtility = new ScreenshotUtility();
+            screenshotUtility.setLocale(defaultLocale != null ? Locale.getDefault() : null);
+            Bitmap currentBitmap = screenshotUtility.createBitmapFromActivity(activity, testName);
+            assertNotNull("Failed to capture bitmap from activity", currentBitmap);
 
-        Bitmap baselineBitmap = screenshotUtility.loadBaselineBitmapForComparison(getTestContext(), testName);
-        if (baselineBitmap == null) {
-            throw new ScreenshotBaselineNotDefinedException(testName);
-        }
+            Bitmap baselineBitmap = screenshotUtility.loadBaselineBitmapForComparison(getTestContext(), testName);
+            if (baselineBitmap == null) {
+                throw new ScreenshotBaselineNotDefinedException(testName);
+            }
 
-        if (screenshotUtility.compareBitmaps(baselineBitmap, currentBitmap)) {
-            // Delete the screenshot from the sdcard if it is identical to the current image
-            assertTrue("Could not delete cached bitmap " + testName, screenshotUtility.deleteBitmap(activity, testName));
-        } else {
-            throw new ScreenshotIsDifferentException();
+            if (screenshotUtility.compareBitmaps(baselineBitmap, currentBitmap)) {
+                // Delete the screenshot from the sdcard if it is identical to the current image
+                assertTrue("Could not delete cached bitmap " + testName, screenshotUtility.deleteBitmap(activity, testName));
+            } else {
+                throw new ScreenshotIsDifferentException();
+            }
+        } finally {
+            if (defaultLocale != null) {
+                LocaleHelper.setTestLocale(defaultLocale);
+                defaultLocale = null;
+            }
         }
     }
 

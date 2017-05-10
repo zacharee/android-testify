@@ -16,7 +16,7 @@ buildscript {
         maven { url 'http://dl.bintray.com/shopify/shopify-android/' }
     }
     dependencies {
-        classpath 'com.shopify.testify:plugin:0.5.1'
+        classpath 'com.shopify.testify:plugin:0.5.2'
     }
 }
 apply plugin: 'com.shopify.testify'

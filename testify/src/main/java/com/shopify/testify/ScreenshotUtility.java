@@ -41,18 +41,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
-public class ScreenshotUtility {
+class ScreenshotUtility {
 
     private static final String LOG_TAG = ScreenshotUtility.class.getSimpleName();
     private static final String PNG_EXTENSION = ".png";
     private static final String DESTINATION_DIR = "images";
     private static final String SOURCE_DIR = "screenshots/";
+    @Nullable private Locale locale = null;
 
-    protected Bitmap createBitmapFromView(@NonNull final Activity activity, @Nullable final View targetView) {
+    private Bitmap createBitmapFromView(@NonNull final Activity activity, @Nullable final View targetView) {
         View v = targetView;
         if (v == null) {
             v = activity.getWindow().getDecorView();
@@ -63,7 +65,7 @@ public class ScreenshotUtility {
         return bitmap;
     }
 
-    protected boolean saveBitmapToFile(@NonNull Context context, @NonNull Bitmap bitmap, String outputFilePath) throws Exception {
+    private boolean saveBitmapToFile(@NonNull Context context, @NonNull Bitmap bitmap, String outputFilePath) throws Exception {
         if (assureScreenshotDirectory(context)) {
             Log.d(LOG_TAG, "Writing screenshot to " + outputFilePath);
             OutputStream outputStream = new FileOutputStream(outputFilePath);
@@ -76,7 +78,7 @@ public class ScreenshotUtility {
         }
     }
 
-    protected boolean assureScreenshotDirectory(@NonNull Context context) {
+    private boolean assureScreenshotDirectory(@NonNull Context context) {
         boolean created = true;
         File outputDirectory = getOutputDirectoryPath(context);
         if (!outputDirectory.exists()) {
@@ -86,22 +88,29 @@ public class ScreenshotUtility {
     }
 
     @NonNull
-    protected File getOutputDirectoryPath(@NonNull Context context) {
+    private File getOutputDirectoryPath(@NonNull Context context) {
         return context.getDir(DESTINATION_DIR, Context.MODE_PRIVATE);
     }
 
-    protected String getOutputFilePath(@NonNull final Context context, final String fileName) {
-        return getOutputDirectoryPath(context).getPath() + File.separator + fileName + PNG_EXTENSION;
+    private String getOutputFilePath(@NonNull final Context context, final String fileName) {
+        return getOutputDirectoryPath(context).getPath() + File.separator + fileName + getLocaleIdentifier() + PNG_EXTENSION;
     }
 
-    protected BitmapFactory.Options getPreferredBitmapOptions() {
+    private String getLocaleIdentifier() {
+        if (locale != null) {
+            return "-" + locale.getLanguage();
+        }
+        return "";
+    }
+
+    private BitmapFactory.Options getPreferredBitmapOptions() {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         return options;
     }
 
     @Nullable
-    protected Bitmap loadBitmapFromAsset(Context context, String filePath) throws Exception {
+    private Bitmap loadBitmapFromAsset(Context context, String filePath) throws Exception {
         AssetManager assetManager = context.getAssets();
         InputStream inputStream = null;
         Bitmap bitmap = null;
@@ -128,7 +137,7 @@ public class ScreenshotUtility {
      * Load a baseline bitmap from the androidTest assets directory.
      */
     @Nullable
-    public Bitmap loadBaselineBitmapForComparison(@NonNull Context context, String testName) throws Exception {
+    Bitmap loadBaselineBitmapForComparison(@NonNull Context context, String testName) throws Exception {
         String filePath = SOURCE_DIR + DeviceIdentifier.getDescription(context) + "/" + testName + PNG_EXTENSION;
         return loadBitmapFromAsset(context, filePath);
     }
@@ -137,7 +146,7 @@ public class ScreenshotUtility {
      * Capture a bitmap from the given Activity and save it to the screenshots directory.
      */
     @Nullable
-    public Bitmap createBitmapFromActivity(final Activity activity, String testName) throws Exception {
+    Bitmap createBitmapFromActivity(final Activity activity, String testName) throws Exception {
         final Bitmap[] currentActivityBitmap = new Bitmap[1];
         final CountDownLatch latch = new CountDownLatch(1);
         activity.runOnUiThread(new Runnable() {
@@ -165,12 +174,16 @@ public class ScreenshotUtility {
     /**
      * Compare two bitmaps using {@link Bitmap#sameAs(Bitmap)}
      */
-    public boolean compareBitmaps(@Nullable Bitmap baselineBitmap, @Nullable Bitmap currentBitmap) {
+    boolean compareBitmaps(@Nullable Bitmap baselineBitmap, @Nullable Bitmap currentBitmap) {
         return !(baselineBitmap == null || currentBitmap == null) && baselineBitmap.sameAs(currentBitmap);
     }
 
-    public boolean deleteBitmap(Context context, String testName) {
+    boolean deleteBitmap(Context context, String testName) {
         final File file = new File(getOutputFilePath(context, testName));
         return file.delete();
+    }
+
+    void setLocale(@Nullable Locale locale) {
+        this.locale = locale;
     }
 }

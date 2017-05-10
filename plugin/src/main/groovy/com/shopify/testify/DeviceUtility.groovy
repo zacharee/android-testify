@@ -3,6 +3,13 @@ package com.shopify.testify
 import groovy.io.FileType
 import org.gradle.api.Project
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+
 class DeviceUtility {
 
     Project project
@@ -21,14 +28,17 @@ class DeviceUtility {
     }
 
     def getDeviceKey() {
+        getDeviceKey(language())
+    }
 
+    def getDeviceKey(String language) {
         def densityLine = [getAdbPath(), '-e', 'shell', 'wm', 'density']
         def density = densityLine.execute().text.substring("Physical density: ".length()).trim()
 
         def sizeLine = [getAdbPath(), '-e', 'shell', 'wm', 'size']
         def size = sizeLine.execute().text.substring("Physical size: ".length()).trim()
 
-        return "${version()}-${size}@${density}dp-${language()}"
+        return "${version()}-${size}@${density}dp-${language}"
     }
 
     def getDeviceImageDirectory() {
@@ -36,7 +46,11 @@ class DeviceUtility {
     }
 
     def getDestinationImageDirectory() {
-        return "${project.testify.baselineSourceDir}/${getDeviceKey()}/"
+        return getDestinationImageDirectory(language());
+    }
+
+    def getDestinationImageDirectory(String language) {
+        return "${project.testify.baselineSourceDir}/${getDeviceKey(language)}/"
     }
 
     def pullScreenshots() {
@@ -53,7 +67,26 @@ class DeviceUtility {
         // Wait for all the files to be committed to disk
         sleep(project.testify.pullWaitTime);
 
+        distributeLocalizedScreenshots();
+
         println("Ready")
+    }
+
+    void distributeLocalizedScreenshots() {
+        Pattern pattern = Pattern.compile(".*-([a-z]{2})\\.png");
+        String[] failedScreenshots = detectFailedScreenshots();
+        for (String failedScreenshot : failedScreenshots) {
+            Matcher matcher = pattern.matcher(failedScreenshot);
+            if (matcher.matches()) {
+                String lang = matcher.group(1);
+                String destinationImageDirectory = getDestinationImageDirectory(lang);
+                String destinationFilePath = getDestinationImageDirectory(lang) + failedScreenshot.substring(failedScreenshot.lastIndexOf("/") + 1, matcher.start(1) - 1) + ".png";
+                if (!new File(destinationImageDirectory).exists()) {
+                    new File(destinationImageDirectory).mkdir()
+                }
+                Files.move(Paths.get(failedScreenshot), Paths.get(destinationFilePath), REPLACE_EXISTING)
+            }
+        }
     }
 
     String[] detectFailedScreenshots() {
