@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -158,7 +159,9 @@ class ScreenshotUtility {
         });
 
         try {
-            if (!latch.await(2, TimeUnit.SECONDS)) {
+            if (Debug.isDebuggerConnected()) {
+                latch.await();
+            } else if (!latch.await(2, TimeUnit.SECONDS)) {
                 return null;
             }
         } catch (InterruptedException e) {
