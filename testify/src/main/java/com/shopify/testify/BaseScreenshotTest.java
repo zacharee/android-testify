@@ -27,6 +27,7 @@ package com.shopify.testify;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Debug;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.test.espresso.Espresso;
@@ -121,7 +122,11 @@ abstract class BaseScreenshotTest<T> {
                 latch.countDown();
             }
         });
-        assertTrue(latch.await(INFLATE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        if (Debug.isDebuggerConnected()) {
+            latch.await();
+        } else {
+            assertTrue(latch.await(INFLATE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        }
     }
 
     public void assertSame() throws Exception {
