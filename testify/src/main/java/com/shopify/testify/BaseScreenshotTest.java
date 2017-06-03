@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Shopify Inc.
+ * Copyright (c) 2017 Shopify Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,10 +50,14 @@ abstract class BaseScreenshotTest<T> {
 
     static final int NO_ID = -1;
     private static final long INFLATE_TIMEOUT_SECONDS = 5;
-    @Nullable private ViewModification viewModification;
-    @Nullable private EspressoActions espressoActions;
-    @Nullable private ViewProvider screenshotViewProvider;
-    @LayoutRes private int layoutId;
+    @Nullable
+    private ViewModification viewModification;
+    @Nullable
+    private EspressoActions espressoActions;
+    @Nullable
+    private ViewProvider screenshotViewProvider;
+    @LayoutRes
+    private int layoutId;
     private boolean hideSoftKeyboard = true;
     private Locale defaultLocale = null;
 
