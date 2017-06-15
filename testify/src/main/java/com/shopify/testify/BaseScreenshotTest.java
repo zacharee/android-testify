@@ -117,6 +117,7 @@ abstract class BaseScreenshotTest<T> {
     private void initializeView(final Activity activity) throws Exception {
         final ViewGroup parentView = getRootView(activity);
         final CountDownLatch latch = new CountDownLatch(1);
+
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -126,6 +127,7 @@ abstract class BaseScreenshotTest<T> {
                 if (viewModification != null) {
                     viewModification.modifyView(parentView);
                 }
+                hideScrollBars(parentView);
                 latch.countDown();
             }
         });
@@ -175,6 +177,25 @@ abstract class BaseScreenshotTest<T> {
             if (defaultLocale != null) {
                 LocaleHelper.setTestLocale(defaultLocale);
                 defaultLocale = null;
+            }
+        }
+    }
+
+    private void hideScrollBars(ViewGroup view) {
+
+        if (view.getChildCount() == 0) {
+            return;
+        }
+
+        for (int i = 0; i < view.getChildCount(); i++) {
+
+            View childView = view.getChildAt(i);
+
+            if (childView instanceof ViewGroup) {
+                hideScrollBars((ViewGroup) childView);
+            } else {
+                view.setVerticalScrollBarEnabled(false);
+                view.setHorizontalScrollBarEnabled(false);
             }
         }
     }
