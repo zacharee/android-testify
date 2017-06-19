@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Shopify Inc.
+ * Copyright (c) 2017 Shopify Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,8 @@ import com.shopify.testify.annotation.ScreenshotInstrumentation;
 @ScreenshotInstrumentation
 public class ScreenshotTestCase<T extends Activity> extends ActivityInstrumentationTestCase2<T> {
 
-    @IdRes private int rootViewId = View.NO_ID;
+    @IdRes
+    private int rootViewId = View.NO_ID;
 
     public ScreenshotTestCase(Class<T> activityClass) {
         super(activityClass);

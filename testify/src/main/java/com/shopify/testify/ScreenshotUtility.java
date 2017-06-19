@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Shopify Inc.
+ * Copyright (c) 2017 Shopify Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,8 @@ class ScreenshotUtility {
     private static final String PNG_EXTENSION = ".png";
     private static final String DESTINATION_DIR = "images";
     private static final String SOURCE_DIR = "screenshots/";
-    @Nullable private Locale locale = null;
+    @Nullable
+    private Locale locale = null;
 
     private Bitmap createBitmapFromView(@NonNull final Activity activity, @Nullable final View targetView) {
         View v = targetView;

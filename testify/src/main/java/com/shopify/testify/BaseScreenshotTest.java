@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Shopify Inc.
+ * Copyright (c) 2017 Shopify Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,11 +50,16 @@ abstract class BaseScreenshotTest<T> {
 
     static final int NO_ID = -1;
     private static final long INFLATE_TIMEOUT_SECONDS = 5;
-    @Nullable private ViewModification viewModification;
-    @Nullable private EspressoActions espressoActions;
-    @Nullable private ViewProvider screenshotViewProvider;
-    @LayoutRes private int layoutId;
+    @Nullable
+    private ViewModification viewModification;
+    @Nullable
+    private EspressoActions espressoActions;
+    @Nullable
+    private ViewProvider screenshotViewProvider;
+    @LayoutRes
+    private int layoutId;
     private boolean hideSoftKeyboard = true;
+    private boolean hideScrollbars = true;
     private Locale defaultLocale = null;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
@@ -92,6 +97,11 @@ abstract class BaseScreenshotTest<T> {
         return getThis();
     }
 
+    public T setHideScrollbars(boolean hideScrollbars) {
+        this.hideScrollbars = hideScrollbars;
+        return getThis();
+    }
+
     /**
      * Sets the default locale for this test case.
      * {@link #assertSame()} will reset the locale on completion.
@@ -117,6 +127,7 @@ abstract class BaseScreenshotTest<T> {
     private void initializeView(final Activity activity) throws Exception {
         final ViewGroup parentView = getRootView(activity);
         final CountDownLatch latch = new CountDownLatch(1);
+
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -149,6 +160,10 @@ abstract class BaseScreenshotTest<T> {
                 Espresso.closeSoftKeyboard();
             }
 
+            if (hideScrollbars) {
+                hideScrollbars(getRootView(activity));
+            }
+
             final String testName = getTestName();
             final ScreenshotUtility screenshotUtility = new ScreenshotUtility();
             screenshotUtility.setLocale(defaultLocale != null ? Locale.getDefault() : null);
@@ -175,6 +190,28 @@ abstract class BaseScreenshotTest<T> {
             if (defaultLocale != null) {
                 LocaleHelper.setTestLocale(defaultLocale);
                 defaultLocale = null;
+            }
+        }
+    }
+
+    private void hideScrollbars(ViewGroup view) {
+
+        view.setHorizontalScrollBarEnabled(false);
+        view.setVerticalScrollBarEnabled(false);
+
+        if (view.getChildCount() == 0) {
+            return;
+        }
+
+        for (int i = 0; i < view.getChildCount(); i++) {
+
+            View childView = view.getChildAt(i);
+
+            if (childView instanceof ViewGroup) {
+                hideScrollbars((ViewGroup) childView);
+            } else {
+                childView.setHorizontalScrollBarEnabled(false);
+                childView.setVerticalScrollBarEnabled(false);
             }
         }
     }
