@@ -192,6 +192,9 @@ abstract class BaseScreenshotTest<T> {
 
     private void hideScrollbars(ViewGroup view) {
 
+        view.setHorizontalScrollBarEnabled(false);
+        view.setVerticalScrollBarEnabled(false);
+
         if (view.getChildCount() == 0) {
             return;
         }
@@ -203,8 +206,8 @@ abstract class BaseScreenshotTest<T> {
             if (childView instanceof ViewGroup) {
                 hideScrollbars((ViewGroup) childView);
             } else {
-                view.setVerticalScrollBarEnabled(false);
-                view.setHorizontalScrollBarEnabled(false);
+                childView.setHorizontalScrollBarEnabled(false);
+                childView.setVerticalScrollBarEnabled(false);
             }
         }
     }
