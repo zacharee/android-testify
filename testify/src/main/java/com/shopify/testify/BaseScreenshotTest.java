@@ -55,6 +55,7 @@ abstract class BaseScreenshotTest<T> {
     @Nullable private ViewProvider screenshotViewProvider;
     @LayoutRes private int layoutId;
     private boolean hideSoftKeyboard = true;
+    private boolean hideScrollbars = true;
     private Locale defaultLocale = null;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
@@ -89,6 +90,11 @@ abstract class BaseScreenshotTest<T> {
 
     public T setHideSoftKeyboard(boolean hideSoftKeyboard) {
         this.hideSoftKeyboard = hideSoftKeyboard;
+        return getThis();
+    }
+
+    public T setHideScrollbars(boolean hideScrollbars) {
+        this.hideScrollbars = hideScrollbars;
         return getThis();
     }
 
@@ -127,7 +133,6 @@ abstract class BaseScreenshotTest<T> {
                 if (viewModification != null) {
                     viewModification.modifyView(parentView);
                 }
-                hideScrollBars(parentView);
                 latch.countDown();
             }
         });
@@ -149,6 +154,10 @@ abstract class BaseScreenshotTest<T> {
 
             if (hideSoftKeyboard) {
                 Espresso.closeSoftKeyboard();
+            }
+
+            if (hideScrollbars) {
+                hideScrollbars(getRootView(activity));
             }
 
             final String testName = getTestName();
@@ -181,7 +190,7 @@ abstract class BaseScreenshotTest<T> {
         }
     }
 
-    private void hideScrollBars(ViewGroup view) {
+    private void hideScrollbars(ViewGroup view) {
 
         if (view.getChildCount() == 0) {
             return;
@@ -192,7 +201,7 @@ abstract class BaseScreenshotTest<T> {
             View childView = view.getChildAt(i);
 
             if (childView instanceof ViewGroup) {
-                hideScrollBars((ViewGroup) childView);
+                hideScrollbars((ViewGroup) childView);
             } else {
                 view.setVerticalScrollBarEnabled(false);
                 view.setHorizontalScrollBarEnabled(false);
