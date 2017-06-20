@@ -23,7 +23,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    coreVersion = '0.5.5'
+    coreVersion = '0.5.6'
 }
 
 project.ext.preDexLibs = !project.hasProperty('disablePreDex')
