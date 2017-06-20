@@ -133,6 +133,9 @@ abstract class BaseScreenshotTest<T> {
                 if (viewModification != null) {
                     viewModification.modifyView(parentView);
                 }
+                if (hideScrollbars) {
+                    disableScrollBars(parentView);
+                }
                 latch.countDown();
             }
         });
@@ -154,10 +157,6 @@ abstract class BaseScreenshotTest<T> {
 
             if (hideSoftKeyboard) {
                 Espresso.closeSoftKeyboard();
-            }
-
-            if (hideScrollbars) {
-                hideScrollbars(getRootView(activity));
             }
 
             final String testName = getTestName();
@@ -190,7 +189,7 @@ abstract class BaseScreenshotTest<T> {
         }
     }
 
-    private void hideScrollbars(ViewGroup view) {
+    private void disableScrollBars(ViewGroup view) {
 
         view.setHorizontalScrollBarEnabled(false);
         view.setVerticalScrollBarEnabled(false);
@@ -204,7 +203,7 @@ abstract class BaseScreenshotTest<T> {
             View childView = view.getChildAt(i);
 
             if (childView instanceof ViewGroup) {
-                hideScrollbars((ViewGroup) childView);
+                disableScrollBars((ViewGroup) childView);
             } else {
                 childView.setHorizontalScrollBarEnabled(false);
                 childView.setVerticalScrollBarEnabled(false);
