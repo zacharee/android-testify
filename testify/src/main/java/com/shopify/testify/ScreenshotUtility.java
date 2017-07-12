@@ -29,10 +29,12 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.InstrumentationRegistry;
 import android.util.Log;
 import android.view.View;
 
@@ -52,7 +54,8 @@ class ScreenshotUtility {
 
     private static final String LOG_TAG = ScreenshotUtility.class.getSimpleName();
     private static final String PNG_EXTENSION = ".png";
-    private static final String DESTINATION_DIR = "images";
+    private static final String DATA_DESTINATION_DIR = "images";
+    private static final String SDCARD_DESTINATION_DIR = "/testify_images";
     private static final String SOURCE_DIR = "screenshots/";
     @Nullable
     private Locale locale = null;
@@ -92,8 +95,14 @@ class ScreenshotUtility {
 
     @NonNull
     private File getOutputDirectoryPath(@NonNull Context context) {
-        File sdCard = Environment.getExternalStorageDirectory();
-        return new File(sdCard.getAbsolutePath() + "/" + DESTINATION_DIR);
+        Bundle extras = InstrumentationRegistry.getArguments();
+
+        if (extras.containsKey("useSdCard") && extras.get("useSdCard").equals("true")) {
+            File sdCard = Environment.getExternalStorageDirectory();
+            return new File(sdCard.getAbsolutePath() + SDCARD_DESTINATION_DIR);
+
+        }
+        return context.getDir(DATA_DESTINATION_DIR, Context.MODE_PRIVATE);
     }
 
     private String getOutputFilePath(@NonNull final Context context, final String fileName) {

@@ -34,6 +34,7 @@ class InputSettingsExtension {
     String baselineSourceDir
     String moduleName;
     String testContextId
+    boolean useSdCard = false
 
     String getTestRunner() {
         if (testRunner == null) {
