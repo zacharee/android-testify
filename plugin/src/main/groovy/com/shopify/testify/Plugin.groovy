@@ -72,6 +72,6 @@ class Plugin implements org.gradle.api.Plugin<Project> {
             GenerateDiffImagesTask.addDependencies(project)
         }
 
-        project.dependencies.add("androidTestCompile", "com.shopify.testify:testify:" + getClass().getPackage().getImplementationVersion())
+        project.dependencies.add 'androidTestCompile', "com.shopify.testify:testify:" + getClass().getPackage().getImplementationVersion()
     }
 }
