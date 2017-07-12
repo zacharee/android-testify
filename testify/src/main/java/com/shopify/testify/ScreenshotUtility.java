@@ -30,6 +30,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Debug;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -91,7 +92,8 @@ class ScreenshotUtility {
 
     @NonNull
     private File getOutputDirectoryPath(@NonNull Context context) {
-        return context.getDir(DESTINATION_DIR, Context.MODE_PRIVATE);
+        File sdCard = Environment.getExternalStorageDirectory();
+        return new File(sdCard.getAbsolutePath() + "/" + DESTINATION_DIR);
     }
 
     private String getOutputFilePath(@NonNull final Context context, final String fileName) {
