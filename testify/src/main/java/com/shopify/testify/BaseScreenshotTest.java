@@ -32,9 +32,11 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.Espresso;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.libraries.cloudtesting.screenshots.ScreenShotter;
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
 import com.shopify.testify.exception.ScreenshotIsDifferentException;
 
@@ -50,6 +52,7 @@ abstract class BaseScreenshotTest<T> {
 
     static final int NO_ID = -1;
     private static final long INFLATE_TIMEOUT_SECONDS = 5;
+    private static final String LOG_TAG = BaseScreenshotTest.class.getName();
     @Nullable
     private ViewModification viewModification;
     @Nullable
@@ -185,6 +188,10 @@ abstract class BaseScreenshotTest<T> {
             } else {
                 throw new ScreenshotIsDifferentException();
             }
+        } catch (ScreenshotIsDifferentException | ScreenshotBaselineNotDefinedException exception) {
+            Log.d(LOG_TAG, "Invoking Firebase ScreenShotter");
+            ScreenShotter.takeScreenshot(getTestName(), getActivity());
+            throw exception;
         } finally {
             if (defaultLocale != null) {
                 LocaleHelper.setTestLocale(defaultLocale);

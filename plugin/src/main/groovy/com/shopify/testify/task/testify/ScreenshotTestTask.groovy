@@ -72,18 +72,28 @@ class ScreenshotTestTask extends TestifyDefaultTask {
         return shardParams
     }
 
+    private static def getRuntimeParams() {
+        def runtimeParams = ""
+        def useSdCard = System.getenv("TESTIFY_USE_SDCARD")
+        if (useSdCard != null && useSdCard.toBoolean()) {
+            runtimeParams = "-e useSdCard true"
+        }
+        return runtimeParams
+    }
+
     @Override
     def taskAction() {
         def shardParams = getShardParams()
         def testPackage = project.testify.testPackageId
         def testRunner = project.testify.testRunner
         def testTarget = getTestTarget()
+        def runtimeParams = getRuntimeParams()
 
         if (RecordModeTask.isRecordMode) {
             new DeviceUtility(project).clearScreenshots()
         }
 
-        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', shardParams, testTarget, '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
+        def command = [new DeviceUtility(project).getAdbPath(), '-e', 'shell', 'am', 'instrument', runtimeParams, shardParams, testTarget, '-e', 'annotation', 'com.shopify.testify.annotation.ScreenshotInstrumentation', '-w', "${testPackage}/${testRunner}"]
         def log = runAndLog(command)
 
         if (!RecordModeTask.isRecordMode && (log.contains("FAILURES!!!") || log.contains("INSTRUMENTATION_CODE: 0") || log.contains("Process crashed while executing"))) {

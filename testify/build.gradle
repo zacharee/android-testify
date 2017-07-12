@@ -6,6 +6,8 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 def VERSION_NAME = "$project.coreVersion"
 
+apply from: 'https://raw.githubusercontent.com/adwiv/android-fat-aar/master/fat-aar.gradle'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -46,6 +48,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    provided 'com.android.support.test:runner:0.5'
+    embedded project(':CloudTestingScreenshotter')
 }
 
 /*
@@ -67,17 +71,16 @@ task javadoc(type: Javadoc) {
     source = sourceSets.javadoc.allSource
     title = "Android Testify"
 
-//    exclude('**/internal/**')
+    source = android.sourceSets.main.java.srcDirs
+    exclude '**/R.html', '**/R.*.html', '**/index.html'
+    exclude('**/internal/**')
 
     classpath = configurations.compile
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-
-    def designLib = "${android.sdkDirectory}/extras/android/support/design/libs/android-support-design.jar"
-    classpath += project.files(designLib)
-
-    options {
-        linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference")
-        links("http://square.github.io/retrofit/javadoc")
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.javaCompile.classpath
+        }
     }
 }
 

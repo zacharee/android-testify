@@ -1,0 +1,1 @@
+https://github.com/adwiv/android-fat-aar/blob/master/LICENSE

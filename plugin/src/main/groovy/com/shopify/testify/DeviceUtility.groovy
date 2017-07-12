@@ -66,8 +66,11 @@ class DeviceUtility {
     }
 
     def getDeviceImageDirectory() {
-//        return "/data/data/${project.testify.testContextId}/app_images/"
-        return "/sdcard/images/"
+        if (project.testify.useSdCard) {
+            return "/sdcard/testify_images/"
+        } else {
+            return "/data/data/${project.testify.testContextId}/app_images/"
+        }
     }
 
     def getDestinationImageDirectory() {
