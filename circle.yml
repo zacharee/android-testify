@@ -4,24 +4,14 @@ machine:
 
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.3"
+    - echo y | android update sdk --no-ui --all --filter "android-26"
 
-  override:
-    # - ./gradlew --no-color --refresh-dependencies
-    # - bash libraries/shopify-android-sdk/scripts/prepare-emulator.sh
-    #- $ANDROID_HOME/tools/emulator -avd testAVD -no-audio -sdcard sdcard.img:
-    #        background: true
-    #- bash ./scripts/wait-for-emulator.sh
-    #- $ANDROID_HOME/platform-tools/adb logcat -v threadtime > $CIRCLE_ARTIFACTS/logcat.txt:
-    #      background: true
-    #- bash ./scripts/install-animation-disabler.sh
 test:
   override:
-    - ./gradlew --no-color --continue lint checkstyle test connectedAndroidTest:
+    - ./gradlew --continue lint checkstyle test connectedAndroidTest:
         timeout: 3600
-  #post:
-  #  - bash ./scripts/get_failure_images.sh $CIRCLE_ARTIFACTS
-  #  - cp -r ShopifyForAndroid/build/outputs/androidTest-results/connected/* $CI_REPORTS/*
+
 deployment:
   production:
     branch: master
