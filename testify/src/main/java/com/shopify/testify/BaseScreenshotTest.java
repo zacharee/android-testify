@@ -231,7 +231,9 @@ abstract class BaseScreenshotTest<T> {
     private void hideTextSuggestions(View view) {
         if (view instanceof EditText) {
             int inputType = ((EditText) view).getInputType();
-            ((EditText) view).setInputType(inputType | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            if (inputType != 0) {
+                ((EditText) view).setInputType(inputType | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+            }
         } else if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
                 hideTextSuggestions(((ViewGroup) view).getChildAt(i));
