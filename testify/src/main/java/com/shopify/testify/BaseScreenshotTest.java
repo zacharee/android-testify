@@ -32,9 +32,11 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.Espresso;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.google.android.libraries.cloudtesting.screenshots.ScreenShotter;
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
@@ -64,6 +66,7 @@ abstract class BaseScreenshotTest<T> {
     private boolean hideSoftKeyboard = true;
     private boolean hideScrollbars = true;
     private Locale defaultLocale = null;
+    private boolean hideTextSuggestions = true;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
@@ -141,7 +144,10 @@ abstract class BaseScreenshotTest<T> {
                     viewModification.modifyView(parentView);
                 }
                 if (hideScrollbars) {
-                    disableScrollBars(parentView);
+                    hideScrollBars(parentView);
+                }
+                if (hideTextSuggestions) {
+                    hideTextSuggestions(parentView);
                 }
                 latch.countDown();
             }
@@ -200,7 +206,7 @@ abstract class BaseScreenshotTest<T> {
         }
     }
 
-    private void disableScrollBars(ViewGroup view) {
+    private void hideScrollBars(ViewGroup view) {
 
         view.setHorizontalScrollBarEnabled(false);
         view.setVerticalScrollBarEnabled(false);
@@ -214,10 +220,21 @@ abstract class BaseScreenshotTest<T> {
             View childView = view.getChildAt(i);
 
             if (childView instanceof ViewGroup) {
-                disableScrollBars((ViewGroup) childView);
+                hideScrollBars((ViewGroup) childView);
             } else {
                 childView.setHorizontalScrollBarEnabled(false);
                 childView.setVerticalScrollBarEnabled(false);
+            }
+        }
+    }
+
+    private void hideTextSuggestions(View view) {
+        if (view instanceof EditText) {
+            int inputType = ((EditText) view).getInputType();
+            ((EditText) view).setInputType(inputType | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        } else if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                hideTextSuggestions(((ViewGroup) view).getChildAt(i));
             }
         }
     }
