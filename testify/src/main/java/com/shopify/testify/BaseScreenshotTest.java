@@ -33,6 +33,8 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.Espresso;
 import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
+import android.text.method.TransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +69,7 @@ abstract class BaseScreenshotTest<T> {
     private boolean hideScrollbars = true;
     private Locale defaultLocale = null;
     private boolean hideTextSuggestions = true;
+    private boolean hidePasswords = true;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
@@ -105,6 +108,11 @@ abstract class BaseScreenshotTest<T> {
 
     public T setHideScrollbars(boolean hideScrollbars) {
         this.hideScrollbars = hideScrollbars;
+        return getThis();
+    }
+
+    public T setHidePasswords(boolean hidePasswords) {
+        this.hidePasswords = hidePasswords;
         return getThis();
     }
 
@@ -148,6 +156,9 @@ abstract class BaseScreenshotTest<T> {
                 }
                 if (hideTextSuggestions) {
                     hideTextSuggestions(parentView);
+                }
+                if (hidePasswords) {
+                    hidePassword(parentView);
                 }
                 latch.countDown();
             }
@@ -237,6 +248,19 @@ abstract class BaseScreenshotTest<T> {
         } else if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
                 hideTextSuggestions(((ViewGroup) view).getChildAt(i));
+            }
+        }
+    }
+
+    private void hidePassword(View view) {
+        if (view instanceof EditText) {
+            TransformationMethod transformationMethod = ((EditText) view).getTransformationMethod();
+            if (transformationMethod instanceof PasswordTransformationMethod) {
+                ((EditText) view).setTransformationMethod(StaticPasswordTransformationMethod.getInstance());
+            }
+        } else if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                hidePassword(((ViewGroup) view).getChildAt(i));
             }
         }
     }
