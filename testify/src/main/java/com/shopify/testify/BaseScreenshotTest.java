@@ -32,17 +32,17 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.test.espresso.Espresso;
-import android.text.InputType;
-import android.text.method.PasswordTransformationMethod;
-import android.text.method.TransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.google.android.libraries.cloudtesting.screenshots.ScreenShotter;
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
 import com.shopify.testify.exception.ScreenshotIsDifferentException;
+import com.shopify.testify.modification.HidePasswordViewModification;
+import com.shopify.testify.modification.HideScrollbarsViewModification;
+import com.shopify.testify.modification.HideTextSuggestionsViewModification;
+import com.shopify.testify.modification.SoftwareRenderViewModification;
 
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
@@ -65,11 +65,12 @@ abstract class BaseScreenshotTest<T> {
     private ViewProvider screenshotViewProvider;
     @LayoutRes
     private int layoutId;
-    private boolean hideSoftKeyboard = true;
-    private boolean hideScrollbars = true;
     private Locale defaultLocale = null;
-    private boolean hideTextSuggestions = true;
-    private boolean hidePasswords = true;
+    private boolean hideSoftKeyboard = true;
+    private HidePasswordViewModification hidePasswordViewModification = new HidePasswordViewModification();
+    private HideScrollbarsViewModification hideScrollbarsViewModification = new HideScrollbarsViewModification();
+    private HideTextSuggestionsViewModification hideTextSuggestionsViewModification = new HideTextSuggestionsViewModification();
+    private SoftwareRenderViewModification softwareRenderViewModification = new SoftwareRenderViewModification();
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
@@ -107,12 +108,22 @@ abstract class BaseScreenshotTest<T> {
     }
 
     public T setHideScrollbars(boolean hideScrollbars) {
-        this.hideScrollbars = hideScrollbars;
+        hideScrollbarsViewModification.setEnabled(hideScrollbars);
         return getThis();
     }
 
     public T setHidePasswords(boolean hidePasswords) {
-        this.hidePasswords = hidePasswords;
+        hidePasswordViewModification.setEnabled(hidePasswords);
+        return getThis();
+    }
+
+    public T setHideTextSuggestions(boolean hideTextSuggestions) {
+        hideTextSuggestionsViewModification.setEnabled(hideTextSuggestions);
+        return getThis();
+    }
+
+    public T setUseSoftwareRenderer(boolean useSoftwareRenderer) {
+        softwareRenderViewModification.setEnabled(useSoftwareRenderer);
         return getThis();
     }
 
@@ -151,15 +162,12 @@ abstract class BaseScreenshotTest<T> {
                 if (viewModification != null) {
                     viewModification.modifyView(parentView);
                 }
-                if (hideScrollbars) {
-                    hideScrollBars(parentView);
-                }
-                if (hideTextSuggestions) {
-                    hideTextSuggestions(parentView);
-                }
-                if (hidePasswords) {
-                    hidePassword(parentView);
-                }
+
+                hideScrollbarsViewModification.modify(parentView);
+                hideTextSuggestionsViewModification.modify(parentView);
+                hidePasswordViewModification.modify(parentView);
+                softwareRenderViewModification.modify(parentView);
+
                 latch.countDown();
             }
         });
@@ -213,54 +221,6 @@ abstract class BaseScreenshotTest<T> {
             if (defaultLocale != null) {
                 LocaleHelper.setTestLocale(defaultLocale);
                 defaultLocale = null;
-            }
-        }
-    }
-
-    private void hideScrollBars(ViewGroup view) {
-
-        view.setHorizontalScrollBarEnabled(false);
-        view.setVerticalScrollBarEnabled(false);
-
-        if (view.getChildCount() == 0) {
-            return;
-        }
-
-        for (int i = 0; i < view.getChildCount(); i++) {
-
-            View childView = view.getChildAt(i);
-
-            if (childView instanceof ViewGroup) {
-                hideScrollBars((ViewGroup) childView);
-            } else {
-                childView.setHorizontalScrollBarEnabled(false);
-                childView.setVerticalScrollBarEnabled(false);
-            }
-        }
-    }
-
-    private void hideTextSuggestions(View view) {
-        if (view instanceof EditText) {
-            int inputType = ((EditText) view).getInputType();
-            if (inputType != 0) {
-                ((EditText) view).setInputType(inputType | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-            }
-        } else if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                hideTextSuggestions(((ViewGroup) view).getChildAt(i));
-            }
-        }
-    }
-
-    private void hidePassword(View view) {
-        if (view instanceof EditText) {
-            TransformationMethod transformationMethod = ((EditText) view).getTransformationMethod();
-            if (transformationMethod instanceof PasswordTransformationMethod) {
-                ((EditText) view).setTransformationMethod(StaticPasswordTransformationMethod.getInstance());
-            }
-        } else if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                hidePassword(((ViewGroup) view).getChildAt(i));
             }
         }
     }
