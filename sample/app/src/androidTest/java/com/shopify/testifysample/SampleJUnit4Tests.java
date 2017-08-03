@@ -6,6 +6,7 @@ import android.widget.RadioButton;
 
 import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestRule;
+import com.shopify.testify.annotation.ScreenshotInstrumentation;
 import com.shopify.testify.annotation.TestifyLayout;
 
 import org.junit.Rule;
@@ -24,16 +25,19 @@ public class SampleJUnit4Tests {
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
+    @ScreenshotInstrumentation
     public void ruleUsingAnnotation() throws Exception {
     }
 
     @Test
+    @ScreenshotInstrumentation
     public void ruleUsingSetter() throws Exception {
         screenshotTestRule.setLayoutId(R.layout.activity_main);
     }
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
+    @ScreenshotInstrumentation
     public void usingEspresso() throws Exception {
         screenshotTestRule.setEspressoActions(new ScreenshotTest.EspressoActions() {
             @Override
@@ -45,6 +49,7 @@ public class SampleJUnit4Tests {
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
+    @ScreenshotInstrumentation
     public void withViewModifications() throws Exception {
         screenshotTestRule.setViewModifications(new ScreenshotTest.ViewModification() {
             @Override
