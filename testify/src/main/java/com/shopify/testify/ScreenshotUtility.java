@@ -50,7 +50,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unused")
-class ScreenshotUtility {
+class ScreenshotUtility implements BitmapCompare {
 
     private static final String LOG_TAG = ScreenshotUtility.class.getSimpleName();
     private static final String PNG_EXTENSION = ".png";
@@ -189,7 +189,8 @@ class ScreenshotUtility {
     /**
      * Compare two bitmaps using {@link Bitmap#sameAs(Bitmap)}
      */
-    boolean compareBitmaps(@Nullable Bitmap baselineBitmap, @Nullable Bitmap currentBitmap) {
+    @Override
+    public boolean compareBitmaps(@Nullable Bitmap baselineBitmap, @Nullable Bitmap currentBitmap) {
         return !(baselineBitmap == null || currentBitmap == null) && baselineBitmap.sameAs(currentBitmap);
     }
 

@@ -17,7 +17,7 @@ dependencies:
     #- bash ./scripts/install-animation-disabler.sh
 test:
   override:
-    - ./gradlew --no-color --continue lint checkstyle connectedAndroidTest:
+    - ./gradlew --no-color --continue lint checkstyle test connectedAndroidTest:
         timeout: 3600
   #post:
   #  - bash ./scripts/get_failure_images.sh $CIRCLE_ARTIFACTS
