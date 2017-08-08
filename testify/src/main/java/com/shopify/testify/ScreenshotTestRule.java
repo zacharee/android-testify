@@ -31,6 +31,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 
+import com.shopify.testify.annotation.BitmapComparisonExactness;
 import com.shopify.testify.annotation.TestifyLayout;
 
 import org.junit.rules.TestRule;
@@ -47,6 +48,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
     private Throwable throwable;
     private BaseScreenshotTest.EspressoActions espressoActions;
     private BaseScreenshotTest.ViewModification viewModification;
+    private Float exactness = null;
 
     public ScreenshotTestRule(Class<T> activityClass) {
         super(activityClass);
@@ -59,6 +61,8 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         testName = description.getTestClass().getSimpleName() + "_" + description.getMethodName();
         final TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
         layoutId = (testifyLayout != null) ? testifyLayout.layoutId() : View.NO_ID;
+        final BitmapComparisonExactness bitmapComparison = description.getAnnotation(BitmapComparisonExactness.class);
+        exactness = (bitmapComparison != null) ? bitmapComparison.exactness() : null;
         return new ScreenshotStatement(super.apply(new BaseInterceptorStatement(base), description));
     }
 
@@ -82,7 +86,11 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         try {
             screenshotTest.setViewModifications(viewModification);
             screenshotTest.setEspressoActions(espressoActions);
-            screenshotTest.assertSame();
+            if (exactness != null) {
+                screenshotTest.assertSame(exactness);
+            } else {
+                screenshotTest.assertSame();
+            }
             int a = 0;
         } catch (Throwable throwable) {
             this.throwable = throwable;

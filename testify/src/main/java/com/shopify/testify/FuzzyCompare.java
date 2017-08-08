@@ -92,8 +92,8 @@ class FuzzyCompare implements BitmapCompare {
                 @ColorInt int baselineColor = baselineBitmap.getPixel(x, y);
                 @ColorInt int currentColor = currentBitmap.getPixel(x, y);
 
-                float baselineHsv[] = new float[HSV_SIZE];
-                float currentHsv[] = new float[HSV_SIZE];
+                float[] baselineHsv = new float[HSV_SIZE];
+                float[] currentHsv = new float[HSV_SIZE];
 
                 /*
                  * hsv[0] is Hue [0 .. 360)
