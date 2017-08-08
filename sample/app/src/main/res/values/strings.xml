@@ -155,4 +155,5 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="hello_world">Hello World!</string>
+    <string name="title_activity_color">ColorActivity</string>
 </resources>

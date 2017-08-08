@@ -24,6 +24,11 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".TestHarnessActivity"/>
+        <activity
+            android:name=".ColorActivity"
+            android:label="@string/title_activity_color"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
