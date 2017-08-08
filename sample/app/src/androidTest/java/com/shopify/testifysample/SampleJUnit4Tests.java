@@ -6,11 +6,15 @@ import android.widget.RadioButton;
 
 import com.shopify.testify.ScreenshotTest;
 import com.shopify.testify.ScreenshotTestRule;
+import com.shopify.testify.annotation.BitmapComparisonExactness;
+import com.shopify.testify.annotation.ScreenshotInstrumentation;
 import com.shopify.testify.annotation.TestifyLayout;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Random;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -24,16 +28,19 @@ public class SampleJUnit4Tests {
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
+    @ScreenshotInstrumentation
     public void ruleUsingAnnotation() throws Exception {
     }
 
     @Test
+    @ScreenshotInstrumentation
     public void ruleUsingSetter() throws Exception {
         screenshotTestRule.setLayoutId(R.layout.activity_main);
     }
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
+    @ScreenshotInstrumentation
     public void usingEspresso() throws Exception {
         screenshotTestRule.setEspressoActions(new ScreenshotTest.EspressoActions() {
             @Override
@@ -45,11 +52,34 @@ public class SampleJUnit4Tests {
 
     @Test
     @TestifyLayout(layoutId = R.layout.test_sample)
+    @ScreenshotInstrumentation
     public void withViewModifications() throws Exception {
         screenshotTestRule.setViewModifications(new ScreenshotTest.ViewModification() {
             @Override
             public void modifyView(ViewGroup rootView) {
                 ((RadioButton) rootView.findViewById(R.id.radioButton)).setChecked(true);
+            }
+        });
+    }
+
+    /**
+     * This test randomly assigns a grayscale color with a 5% variance to the specified layout.
+     * With our traditional image comparison, this test will fail every time.
+     * Using the BitmapComparisonExactness, we specify that we require only a 95% match
+     */
+    @Test
+    @TestifyLayout(layoutId = R.layout.activity_color)
+    @BitmapComparisonExactness(exactness = 0.95f)
+    @ScreenshotInstrumentation
+    public void withFuzzyMatching() throws Exception {
+        screenshotTestRule.setViewModifications(new ScreenshotTest.ViewModification() {
+            @Override
+            public void modifyView(ViewGroup rootView) {
+
+                int shade = (int) (0xff * (0.95f + (0.05f * new Random().nextFloat())));
+                int color = 0xff000000 | (shade << 16) | (shade << 8) | (shade);
+
+                rootView.setBackgroundColor(color);
             }
         });
     }

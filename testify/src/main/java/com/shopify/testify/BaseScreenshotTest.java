@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Debug;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -71,6 +72,7 @@ abstract class BaseScreenshotTest<T> {
     private HideScrollbarsViewModification hideScrollbarsViewModification = new HideScrollbarsViewModification();
     private HideTextSuggestionsViewModification hideTextSuggestionsViewModification = new HideTextSuggestionsViewModification();
     private SoftwareRenderViewModification softwareRenderViewModification = new SoftwareRenderViewModification();
+    private BitmapCompare bitmapCompare = null;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
         this.layoutId = layoutId;
@@ -178,6 +180,16 @@ abstract class BaseScreenshotTest<T> {
         }
     }
 
+    /**
+     * @param exactness 0.0: matches against anything(no differences)
+     *                  1.0: exact matches only
+     * @throws Exception same as assertSame()
+     */
+    public void assertSame(@FloatRange(from = 0.0, to = 1.0) float exactness) throws Exception {
+        bitmapCompare = new FuzzyCompare(exactness);
+        assertSame();
+    }
+
     public void assertSame() throws Exception {
         try {
             final Activity activity = getActivity();
@@ -207,8 +219,11 @@ abstract class BaseScreenshotTest<T> {
                 throw new ScreenshotBaselineNotDefinedException(testName);
             }
 
-            if (screenshotUtility.compareBitmaps(baselineBitmap, currentBitmap)) {
-                // Delete the screenshot from the sdcard if it is identical to the current image
+            if (bitmapCompare == null) {
+                bitmapCompare = screenshotUtility;
+            }
+
+            if (bitmapCompare.compareBitmaps(baselineBitmap, currentBitmap)) {
                 assertTrue("Could not delete cached bitmap " + testName, screenshotUtility.deleteBitmap(activity, testName));
             } else {
                 throw new ScreenshotIsDifferentException();
