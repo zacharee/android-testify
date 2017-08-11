@@ -93,6 +93,22 @@ install {
 
 version = VERSION_NAME
 
+task sourcesJar(type: Jar) {
+    from sourceSets.main.groovy.srcDirs
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    baseName = 'plugin'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
 bintray {
     /*
     These values can be found on https://bintray.com/profile/edit
