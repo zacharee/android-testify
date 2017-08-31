@@ -6,14 +6,12 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 def VERSION_NAME = "$project.coreVersion"
 
-apply from: '../fat-aar.gradle'
-
 android {
     compileSdkVersion 26
-    buildToolsVersion "25.0.3"
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
-        minSdkVersion 12
+        minSdkVersion 14
         targetSdkVersion 26
         versionCode 1
         versionName VERSION_NAME
@@ -45,10 +43,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    provided 'com.android.support.test:runner:0.5'
-    embedded project(':CloudTestingScreenshotter')
+    implementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support.test:runner:1.0.1'
+    implementation project(':CloudTestingScreenshotter')
 }
 
 /*
