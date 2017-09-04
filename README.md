@@ -44,44 +44,6 @@ testify {
 - `baselineSourceDir`: [REQUIRED] The relative path to your screenshot assets.
 - `pullWaitTime`: [OPTIONAL] The amount of time in milliseconds to wait for files to copy locally. Defaults to `0`.
 
-### How to run a single test
-
-Take the following test code:
-
-```
-package com.shopify.testifysample;
-
-import com.shopify.testify.ScreenshotTest;
-import com.shopify.testify.ScreenshotTestCase;
-
-public class BasicTests extends ScreenshotTestCase<TestHarnessActivity> {
-
-    public BasicTests() {
-        super(TestHarnessActivity.class, R.id.component_placeholder);
-    }
-
-    public void testBootstrap() throws Exception {
-        new ScreenshotTest(this, R.layout.test_bootstrap).assertSame();
-    }
-
-    public void testMainActivity() throws Exception {
-        new ScreenshotTest(this, R.layout.activity_main).assertSame();
-    }
-}
-```
-
-If you wanted to run a single test, you can use the following command:
-
-`./gradlew screenshotTest -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
-
-Similarly, you can run & record the test in one step using:
-
-`./gradlew screenshotRecord -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
-
-You can also shorten the syntax slightly to:
-
-`./gradlew screenshotRecord -PtestClass=com.shopify.testifysample.BasicTests#testBootstrap`
-
 ### How to write a test
 
 #### JUnit3
@@ -140,6 +102,64 @@ public class SampleJUnit4Tests {
     }
 }
 
+```
+
+### How to run a single test
+
+Take the following test code:
+
+```
+package com.shopify.testifysample;
+
+import com.shopify.testify.ScreenshotTest;
+import com.shopify.testify.ScreenshotTestCase;
+
+public class BasicTests extends ScreenshotTestCase<TestHarnessActivity> {
+
+    public BasicTests() {
+        super(TestHarnessActivity.class, R.id.component_placeholder);
+    }
+
+    public void testBootstrap() throws Exception {
+        new ScreenshotTest(this, R.layout.test_bootstrap).assertSame();
+    }
+
+    public void testMainActivity() throws Exception {
+        new ScreenshotTest(this, R.layout.activity_main).assertSame();
+    }
+}
+```
+
+If you wanted to run a single test, you can use the following command:
+
+`./gradlew screenshotTest -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
+
+Similarly, you can run & record the test in one step using:
+
+`./gradlew screenshotRecord -PtestClass=com.shopify.testifysample.BasicTests -PtestName=testBootstrap`
+
+You can also shorten the syntax slightly to:
+
+`./gradlew screenshotRecord -PtestClass=com.shopify.testifysample.BasicTests#testBootstrap`
+
+### Firebase
+
+#### How to enable Firebase cloud screenshots
+
+Refer to https://firebase.google.com/docs/test-lab/test-screenshots
+
+1. Download the [aar file](https://dl.google.com/firebase/testlab/cloudtestingscreenshotter_lib.aar)
+2. Add the screenshot library to your project
+```
+repositories {
+    jcenter()
+    flatDir {
+        dirs '../aars'
+    }
+}
+dependencies {
+    androidTestCompile (name:'cloudtestingscreenshotter_lib', ext:'aar')
+    }
 ```
 
 ### How to build?

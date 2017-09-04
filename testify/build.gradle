@@ -6,15 +6,13 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 def VERSION_NAME = "$project.coreVersion"
 
-apply from: 'https://raw.githubusercontent.com/adwiv/android-fat-aar/master/fat-aar.gradle'
-
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
-        minSdkVersion 12
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 26
         versionCode 1
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,11 +24,10 @@ android {
         }
     }
     libraryVariants.all { variant ->
-        variant.outputs.each { output ->
+        variant.outputs.all { output ->
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.aar')) {
-                def fileName = "${archivesBaseName}-${version}.aar"
-                output.outputFile = new File(outputFile.parent, fileName)
+                outputFileName = "${archivesBaseName}-${version}.aar"
             }
         }
     }
@@ -46,10 +43,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    provided 'com.android.support.test:runner:0.5'
-    embedded project(':CloudTestingScreenshotter')
+    implementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support.test:runner:1.0.1'
+    implementation project(':CloudTestingScreenshotter')
 }
 
 /*
@@ -112,7 +108,7 @@ ext {
     allLicenses = ["MIT"]
 }
 
-task archiveReleasePackage(type: Zip, dependsOn: [assembleRelease, javadocJar]) {
+task archiveReleasePackage(type: Zip, dependsOn: [assemble, javadocJar]) {
     baseName = "testify"
 
     from("./build/libs") {
