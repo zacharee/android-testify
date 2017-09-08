@@ -229,10 +229,8 @@ abstract class BaseScreenshotTest<T> {
                 throw new ScreenshotIsDifferentException();
             }
         } catch (ScreenshotIsDifferentException | ScreenshotBaselineNotDefinedException exception) {
-            if (hasCloudScreenshotter()) {
-                Log.d(LOG_TAG, "Invoking Firebase ScreenShotter");
-                ScreenShotter.takeScreenshot(getTestName(), getActivity());
-            }
+            Log.d(LOG_TAG, "Invoking Firebase ScreenShotter");
+            ScreenShotter.takeScreenshot(getTestName(), getActivity());
             throw exception;
         } finally {
             if (defaultLocale != null) {
@@ -240,15 +238,6 @@ abstract class BaseScreenshotTest<T> {
                 defaultLocale = null;
             }
         }
-    }
-
-    private boolean hasCloudScreenshotter() {
-        try {
-            Class.forName("com.google.android.libraries.cloudtesting.screenshots.ScreenShotter");
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
-        return true;
     }
 
     // TODO: Move to top-level to simplify import
