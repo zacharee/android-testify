@@ -69,7 +69,7 @@ public class SampleJUnit4Tests {
      */
     @Test
     @TestifyLayout(layoutId = R.layout.activity_color)
-    @BitmapComparisonExactness(exactness = 0.95f)
+    @BitmapComparisonExactness(exactness = 1.0f)
     @ScreenshotInstrumentation
     public void withFuzzyMatching() throws Exception {
         screenshotTestRule.setViewModifications(new ScreenshotTest.ViewModification() {

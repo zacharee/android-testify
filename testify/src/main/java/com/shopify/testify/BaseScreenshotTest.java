@@ -226,7 +226,7 @@ abstract class BaseScreenshotTest<T> {
             if (bitmapCompare.compareBitmaps(baselineBitmap, currentBitmap)) {
                 assertTrue("Could not delete cached bitmap " + testName, screenshotUtility.deleteBitmap(activity, testName));
             } else {
-                throw new ScreenshotIsDifferentException();
+                throw new ScreenshotIsDifferentException(testName);
             }
         } catch (ScreenshotIsDifferentException | ScreenshotBaselineNotDefinedException exception) {
             Log.d(LOG_TAG, "Invoking Firebase ScreenShotter");

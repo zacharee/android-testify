@@ -26,9 +26,8 @@ package com.shopify.testify.exception;
 
 public class ScreenshotIsDifferentException extends Exception {
 
-    // TODO: Update with correct gradle commands
-    public ScreenshotIsDifferentException() {
+    public ScreenshotIsDifferentException(String testName) {
         super("\n\n*  The captured screenshot is different from the baseline screenshot.\n" +
-                "*  Run `./gradlew screenshotPull` to view the differences.\n\n");
+                "*  Run `./gradlew screenshotPull -p" + testName + "` to view the differences.\n\n");
     }
 }
