@@ -26,9 +26,8 @@ package com.shopify.testify.exception;
 
 public class ScreenshotBaselineNotDefinedException extends Exception {
 
-    // TODO: Update this with the correct gradle command
-    public ScreenshotBaselineNotDefinedException(String testName) {
+    public ScreenshotBaselineNotDefinedException(String testName, String testClass) {
         super("\n\n*  A baseline screenshot could not be found for '" + testName + "'.\n" +
-                "*  To record a baseline screenshot, run `./gradlew recordMode screenshotTest`\n");
+                "*  To record a baseline screenshot, run `./gradlew screenshotRecord -PtestClass=" + testClass + "`\n");
     }
 }

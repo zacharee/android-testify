@@ -45,6 +45,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
     @LayoutRes
     private int layoutId;
     private String testName;
+    private String testClass;
     private Throwable throwable;
     private BaseScreenshotTest.EspressoActions espressoActions;
     private BaseScreenshotTest.ViewModification viewModification;
@@ -59,6 +60,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         throwable = null;
         espressoActions = null;
         testName = description.getTestClass().getSimpleName() + "_" + description.getMethodName();
+        testClass = description.getTestClass().getCanonicalName() + "$" + description.getMethodName();
         final TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
         layoutId = (testifyLayout != null) ? testifyLayout.layoutId() : View.NO_ID;
         final BitmapComparisonExactness bitmapComparison = description.getAnnotation(BitmapComparisonExactness.class);
@@ -142,6 +144,11 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         @Override
         protected String getTestName() {
             return testName;
+        }
+
+        @Override
+        protected String getFullyQualifiedTestPath() {
+            return testClass;
         }
 
         @Override

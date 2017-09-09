@@ -53,6 +53,11 @@ public class ScreenshotTest extends BaseScreenshotTest<ScreenshotTest> {
     }
 
     @Override
+    protected String getFullyQualifiedTestPath() {
+        return testCase.getClass().getCanonicalName() + "$" + testCase.getName();
+    }
+
+    @Override
     protected Context getTestContext() {
         return testCase.getInstrumentation().getContext();
     }
