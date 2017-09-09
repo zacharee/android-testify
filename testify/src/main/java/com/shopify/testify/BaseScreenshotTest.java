@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import com.google.android.libraries.cloudtesting.screenshots.ScreenShotter;
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
 import com.shopify.testify.exception.ScreenshotIsDifferentException;
+import com.shopify.testify.modification.HideCursorViewModification;
 import com.shopify.testify.modification.HidePasswordViewModification;
 import com.shopify.testify.modification.HideScrollbarsViewModification;
 import com.shopify.testify.modification.HideTextSuggestionsViewModification;
@@ -75,6 +76,7 @@ abstract class BaseScreenshotTest<T> {
     private HideScrollbarsViewModification hideScrollbarsViewModification = new HideScrollbarsViewModification();
     private HideTextSuggestionsViewModification hideTextSuggestionsViewModification = new HideTextSuggestionsViewModification();
     private SoftwareRenderViewModification softwareRenderViewModification = new SoftwareRenderViewModification();
+    private HideCursorViewModification hideCursorViewModification = new HideCursorViewModification();
     private BitmapCompare bitmapCompare = null;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
@@ -121,6 +123,11 @@ abstract class BaseScreenshotTest<T> {
 
     public T setHidePasswords(boolean hidePasswords) {
         hidePasswordViewModification.setEnabled(hidePasswords);
+        return getThis();
+    }
+
+    public T setHideCursor(boolean hideCursor) {
+        hideCursorViewModification.setEnabled(hideCursor);
         return getThis();
     }
 
@@ -174,6 +181,7 @@ abstract class BaseScreenshotTest<T> {
                 hideTextSuggestionsViewModification.modify(parentView);
                 hidePasswordViewModification.modify(parentView);
                 softwareRenderViewModification.modify(parentView);
+                hideCursorViewModification.modify(parentView);
 
                 latch.countDown();
             }
@@ -222,7 +230,7 @@ abstract class BaseScreenshotTest<T> {
             Bitmap baselineBitmap = screenshotUtility.loadBaselineBitmapForComparison(getTestContext(), testName);
             if (baselineBitmap == null) {
                 if (isRecordMode()) {
-                    instrumentationPrintln("\n\t✓ " +(char)27 + "[36mRecording baseline for " + testName + (char)27 + "[0m");
+                    instrumentationPrintln("\n\t✓ " + (char) 27 + "[36mRecording baseline for " + testName + (char) 27 + "[0m");
                     return;
                 } else {
                     throw new ScreenshotBaselineNotDefinedException(testName, getFullyQualifiedTestPath());

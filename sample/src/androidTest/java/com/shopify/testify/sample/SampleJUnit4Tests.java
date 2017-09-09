@@ -83,4 +83,10 @@ public class SampleJUnit4Tests {
             }
         });
     }
+
+    @Test
+    @TestifyLayout(layoutId = R.layout.content_editable)
+    @ScreenshotInstrumentation
+    public void noBlinkingCursor() {
+    }
 }
