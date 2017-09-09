@@ -42,7 +42,7 @@ testify {
     testContextId "${project.android.defaultConfig.applicationId}"
     testPackageId "${project.android.defaultConfig.applicationId}.test"
     testRunner project.android.defaultConfig.testInstrumentationRunner
-    baselineSourceDir "./app/src/androidTest/assets/screenshots"
+    baselineSourceDir "./sample/src/androidTest/assets/screenshots"
     pullWaitTime 0
 }
 

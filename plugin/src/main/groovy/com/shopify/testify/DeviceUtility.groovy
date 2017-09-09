@@ -90,6 +90,14 @@ class DeviceUtility {
         println "src:\t${src}"
         println "dst:\t${dst}"
 
+        File dstPath = new File(dst)
+        if (!dstPath.exists()) {
+            dstPath.mkdirs()
+        }
+        if (!dstPath.exists()) {
+            throw new Exception("Desination directory ${dst} could not be found")
+        }
+
         [getAdbPath(), "-e", 'pull', src, dst].execute()
 
         // Wait for all the files to be committed to disk

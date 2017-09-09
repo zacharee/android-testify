@@ -60,7 +60,7 @@ public class ScreenshotTestRule<T extends Activity> extends ActivityTestRule<T> 
         throwable = null;
         espressoActions = null;
         testName = description.getTestClass().getSimpleName() + "_" + description.getMethodName();
-        testClass = description.getTestClass().getCanonicalName() + "$" + description.getMethodName();
+        testClass = description.getTestClass().getCanonicalName() + "#" + description.getMethodName();
         final TestifyLayout testifyLayout = description.getAnnotation(TestifyLayout.class);
         layoutId = (testifyLayout != null) ? testifyLayout.layoutId() : View.NO_ID;
         final BitmapComparisonExactness bitmapComparison = description.getAnnotation(BitmapComparisonExactness.class);

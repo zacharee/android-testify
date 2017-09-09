@@ -54,7 +54,7 @@ public class ScreenshotTest extends BaseScreenshotTest<ScreenshotTest> {
 
     @Override
     protected String getFullyQualifiedTestPath() {
-        return testCase.getClass().getCanonicalName() + "$" + testCase.getName();
+        return testCase.getClass().getCanonicalName() + "#" + testCase.getName();
     }
 
     @Override

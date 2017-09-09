@@ -25,13 +25,16 @@
 package com.shopify.testify;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.util.Log;
 import android.view.View;
@@ -218,7 +221,12 @@ abstract class BaseScreenshotTest<T> {
 
             Bitmap baselineBitmap = screenshotUtility.loadBaselineBitmapForComparison(getTestContext(), testName);
             if (baselineBitmap == null) {
-                throw new ScreenshotBaselineNotDefinedException(testName, getFullyQualifiedTestPath());
+                if (isRecordMode()) {
+                    instrumentationPrintln("\n\t✓ " +(char)27 + "[36mRecording baseline for " + testName + (char)27 + "[0m");
+                    return;
+                } else {
+                    throw new ScreenshotBaselineNotDefinedException(testName, getFullyQualifiedTestPath());
+                }
             }
 
             if (bitmapCompare == null) {
@@ -240,6 +248,17 @@ abstract class BaseScreenshotTest<T> {
                 defaultLocale = null;
             }
         }
+    }
+
+    private void instrumentationPrintln(String str) {
+        Bundle b = new Bundle();
+        b.putString(Instrumentation.REPORT_KEY_STREAMRESULT, "\n" + str);
+        InstrumentationRegistry.getInstrumentation().sendStatus(0, b);
+    }
+
+    private boolean isRecordMode() {
+        Bundle extras = InstrumentationRegistry.getArguments();
+        return (extras.containsKey("isRecordMode") && extras.get("isRecordMode").equals("true"));
     }
 
     // TODO: Move to top-level to simplify import
