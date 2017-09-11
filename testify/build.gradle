@@ -10,6 +10,7 @@ apply from: 'https://raw.githubusercontent.com/adwiv/android-fat-aar/master/fat-
 
 android {
     compileSdkVersion 25
+    //noinspection GradleDependency
     buildToolsVersion "25.0.2"
 
     defaultConfig {

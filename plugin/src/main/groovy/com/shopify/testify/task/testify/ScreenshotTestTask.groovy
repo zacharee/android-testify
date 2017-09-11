@@ -78,6 +78,9 @@ class ScreenshotTestTask extends TestifyDefaultTask {
         if (useSdCard != null && useSdCard.toBoolean()) {
             runtimeParams = "-e useSdCard true"
         }
+        if (RecordModeTask.isRecordMode) {
+            runtimeParams += "-e isRecordMode true"
+        }
         return runtimeParams
     }
 

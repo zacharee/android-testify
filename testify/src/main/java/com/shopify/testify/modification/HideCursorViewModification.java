@@ -21,35 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.shopify.testify.modification;
 
-package com.shopify.testify.task.internal
+import android.view.View;
+import android.widget.EditText;
 
-import com.shopify.testify.DeviceUtility
-import com.shopify.testify.task.TestifyDefaultTask
+public class HideCursorViewModification extends ViewModification {
 
-class PullScreenshotsSyncTask extends TestifyDefaultTask {
-
-    @Override
-    boolean isHidden() {
-        return true
+    public HideCursorViewModification() {
+        super(true);
     }
 
     @Override
-    String getDescription() {
-        return "Pull screenshots and wait for all the files to be committed to disk"
+    protected void performModification(View view) {
+        ((EditText) view).setCursorVisible(false);
     }
 
     @Override
-    def taskAction() {
-        new DeviceUtility(project).pullScreenshots()
-        def failedScreenshots = new DeviceUtility(project).detectFailedScreenshots();
-        if (failedScreenshots.length > 0) {
-            println "Pulling screenshots:"
-            for (int i = 0; i < failedScreenshots.size(); i++) {
-                println "\tCopied " + new File(failedScreenshots[i]).name + "..."
-                sleep(125);
-            }
-            println "\n"
-        }
+    protected boolean qualifies(View view) {
+        return (view instanceof EditText);
     }
 }

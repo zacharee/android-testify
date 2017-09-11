@@ -1,25 +1,74 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         jcenter()
         mavenLocal()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath "com.shopify.testify:plugin:0.7.5"
     }
 }
 
-allprojects {
-    repositories {
-        jcenter()
-        mavenLocal()
+repositories {
+    mavenLocal()
+    maven {
+        url 'https://maven.google.com'
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+apply plugin: 'com.android.application'
+apply plugin: 'com.shopify.testify'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
+    defaultConfig {
+        applicationId "com.shopify.testifysample"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        lintConfig file('lint.xml')
+        abortOnError false
+        warningsAsErrors false
+        textOutput 'stdout'
+        textReport true
+        xmlReport false
+    }
+}
+
+testify {
+    moduleName = "app"
+    applicationPackageId "${project.android.defaultConfig.applicationId}"
+    testContextId "${project.android.defaultConfig.applicationId}"
+    testPackageId "${project.android.defaultConfig.applicationId}.test"
+    testRunner project.android.defaultConfig.testInstrumentationRunner
+    baselineSourceDir "./sample/src/androidTest/assets/screenshots"
+    pullWaitTime 0
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support:support-annotations:25.3.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }

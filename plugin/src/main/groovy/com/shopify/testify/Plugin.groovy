@@ -24,8 +24,6 @@
 
 package com.shopify.testify
 
-import com.shopify.testify.task.deprecated.ClearScreenshotsTask
-import com.shopify.testify.task.deprecated.PullScreenshotsTask
 import com.shopify.testify.task.internal.PullScreenshotsSyncTask
 import com.shopify.testify.task.internal.RecordModeTask
 import com.shopify.testify.task.internal.VerifyPrerequisitesTask
@@ -42,11 +40,9 @@ class Plugin implements org.gradle.api.Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("testify", InputSettingsExtension)
 
-        project.tasks.create("clearScreenshots", ClearScreenshotsTask.class)
         project.tasks.create("disableSoftKeyboard", DisableSoftKeyboardTask.class)
         project.tasks.create("generateDiffImages", GenerateDiffImagesTask.class)
         project.tasks.create("hidePasswords", HidePasswordsTask.class)
-        project.tasks.create("pullScreenshots", PullScreenshotsTask.class)
         project.tasks.create("pullScreenshotsSync", PullScreenshotsSyncTask.class)
         project.tasks.create("recordMode", RecordModeTask.class)
         project.tasks.create("removeDiffImages", RemoveDiffImagesTask.class)
@@ -57,11 +53,11 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         project.tasks.create("showTestifyVersion", VersionTask.class)
         project.tasks.create("showTimeZone", ShowTimeZoneTask.class)
         project.tasks.create("verifyPrerequisites", VerifyPrerequisitesTask.class)
+        project.tasks.create("screenshotClear", ScreenshotClearTask)
+        project.tasks.create("screenshotPull", ScreenshotPullTask)
 
         // aliases
         project.tasks.create("screenshotRecord", ScreenshotRecordTask)
-        project.tasks.create("screenshotPull", ScreenshotPullTask)
-        project.tasks.create("screenshotClear", ScreenshotClearTask)
 
         project.afterEvaluate {
             InputSettingsExtension.validate(project)

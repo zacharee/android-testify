@@ -21,35 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.shopify.testify.sample;
 
-package com.shopify.testify.task.internal
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.shopify.testify.DeviceUtility
-import com.shopify.testify.task.TestifyDefaultTask
-
-class PullScreenshotsSyncTask extends TestifyDefaultTask {
-
-    @Override
-    boolean isHidden() {
-        return true
-    }
+public class TestHarnessActivity extends AppCompatActivity {
 
     @Override
-    String getDescription() {
-        return "Pull screenshots and wait for all the files to be committed to disk"
-    }
-
-    @Override
-    def taskAction() {
-        new DeviceUtility(project).pullScreenshots()
-        def failedScreenshots = new DeviceUtility(project).detectFailedScreenshots();
-        if (failedScreenshots.length > 0) {
-            println "Pulling screenshots:"
-            for (int i = 0; i < failedScreenshots.size(); i++) {
-                println "\tCopied " + new File(failedScreenshots[i]).name + "..."
-                sleep(125);
-            }
-            println "\n"
-        }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_component_test);
     }
 }
