@@ -5,6 +5,7 @@ machine:
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.2"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-25.0.3"
 
   override:
     # - ./gradlew --no-color --refresh-dependencies
@@ -17,7 +18,7 @@ dependencies:
     #- bash ./scripts/install-animation-disabler.sh
 test:
   override:
-    - ./gradlew --no-color --continue lint checkstyle test connectedAndroidTest:
+    - ./gradlew --no-color --continue lint checkstyle test:
         timeout: 3600
   #post:
   #  - bash ./scripts/get_failure_images.sh $CIRCLE_ARTIFACTS

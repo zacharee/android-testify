@@ -1,15 +1,21 @@
 buildscript {
     repositories {
-        maven { url 'http://dl.bintray.com/shopify/shopify-android/' }
+        jcenter()
         mavenLocal()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
     dependencies {
-        classpath "com.shopify.testify:plugin:0.9.0"
+        classpath "com.shopify.testify:plugin:0.7.5"
     }
 }
 
 repositories {
     mavenLocal()
+    maven {
+        url 'https://maven.google.com'
+    }
 }
 
 apply plugin: 'com.android.application'
@@ -33,6 +39,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    lintOptions {
+        lintConfig file('lint.xml')
+        abortOnError false
+        warningsAsErrors false
+        textOutput 'stdout'
+        textReport true
+        xmlReport false
     }
 }
 
