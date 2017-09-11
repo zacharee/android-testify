@@ -24,9 +24,15 @@
 
 package com.shopify.testify.task.testify
 
-import com.shopify.testify.task.deprecated.ClearScreenshotsTask
+import com.shopify.testify.DeviceUtility
+import com.shopify.testify.task.TestifyDefaultTask
 
-class ScreenshotClearTask extends ClearScreenshotsTask {
+class ScreenshotClearTask extends TestifyDefaultTask {
+
+    @Override
+    def taskAction() {
+        new DeviceUtility(project).clearScreenshots()
+    }
 
     @Override
     String getDescription() {

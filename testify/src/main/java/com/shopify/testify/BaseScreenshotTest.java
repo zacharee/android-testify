@@ -25,13 +25,16 @@
 package com.shopify.testify;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Debug;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +43,7 @@ import android.view.ViewGroup;
 import com.google.android.libraries.cloudtesting.screenshots.ScreenShotter;
 import com.shopify.testify.exception.ScreenshotBaselineNotDefinedException;
 import com.shopify.testify.exception.ScreenshotIsDifferentException;
+import com.shopify.testify.modification.HideCursorViewModification;
 import com.shopify.testify.modification.HidePasswordViewModification;
 import com.shopify.testify.modification.HideScrollbarsViewModification;
 import com.shopify.testify.modification.HideTextSuggestionsViewModification;
@@ -72,6 +76,7 @@ abstract class BaseScreenshotTest<T> {
     private HideScrollbarsViewModification hideScrollbarsViewModification = new HideScrollbarsViewModification();
     private HideTextSuggestionsViewModification hideTextSuggestionsViewModification = new HideTextSuggestionsViewModification();
     private SoftwareRenderViewModification softwareRenderViewModification = new SoftwareRenderViewModification();
+    private HideCursorViewModification hideCursorViewModification = new HideCursorViewModification();
     private BitmapCompare bitmapCompare = null;
 
     BaseScreenshotTest(@LayoutRes int layoutId) {
@@ -79,6 +84,8 @@ abstract class BaseScreenshotTest<T> {
     }
 
     protected abstract String getTestName();
+
+    protected abstract String getFullyQualifiedTestPath();
 
     protected abstract Context getTestContext();
 
@@ -116,6 +123,11 @@ abstract class BaseScreenshotTest<T> {
 
     public T setHidePasswords(boolean hidePasswords) {
         hidePasswordViewModification.setEnabled(hidePasswords);
+        return getThis();
+    }
+
+    public T setHideCursor(boolean hideCursor) {
+        hideCursorViewModification.setEnabled(hideCursor);
         return getThis();
     }
 
@@ -169,6 +181,7 @@ abstract class BaseScreenshotTest<T> {
                 hideTextSuggestionsViewModification.modify(parentView);
                 hidePasswordViewModification.modify(parentView);
                 softwareRenderViewModification.modify(parentView);
+                hideCursorViewModification.modify(parentView);
 
                 latch.countDown();
             }
@@ -216,7 +229,12 @@ abstract class BaseScreenshotTest<T> {
 
             Bitmap baselineBitmap = screenshotUtility.loadBaselineBitmapForComparison(getTestContext(), testName);
             if (baselineBitmap == null) {
-                throw new ScreenshotBaselineNotDefinedException(testName);
+                if (isRecordMode()) {
+                    instrumentationPrintln("\n\t✓ " + (char) 27 + "[36mRecording baseline for " + testName + (char) 27 + "[0m");
+                    return;
+                } else {
+                    throw new ScreenshotBaselineNotDefinedException(testName, getFullyQualifiedTestPath());
+                }
             }
 
             if (bitmapCompare == null) {
@@ -226,7 +244,7 @@ abstract class BaseScreenshotTest<T> {
             if (bitmapCompare.compareBitmaps(baselineBitmap, currentBitmap)) {
                 assertTrue("Could not delete cached bitmap " + testName, screenshotUtility.deleteBitmap(activity, testName));
             } else {
-                throw new ScreenshotIsDifferentException();
+                throw new ScreenshotIsDifferentException(getFullyQualifiedTestPath());
             }
         } catch (ScreenshotIsDifferentException | ScreenshotBaselineNotDefinedException exception) {
             Log.d(LOG_TAG, "Invoking Firebase ScreenShotter");
@@ -238,6 +256,17 @@ abstract class BaseScreenshotTest<T> {
                 defaultLocale = null;
             }
         }
+    }
+
+    private void instrumentationPrintln(String str) {
+        Bundle b = new Bundle();
+        b.putString(Instrumentation.REPORT_KEY_STREAMRESULT, "\n" + str);
+        InstrumentationRegistry.getInstrumentation().sendStatus(0, b);
+    }
+
+    private boolean isRecordMode() {
+        Bundle extras = InstrumentationRegistry.getArguments();
+        return (extras.containsKey("isRecordMode") && extras.get("isRecordMode").equals("true"));
     }
 
     // TODO: Move to top-level to simplify import
