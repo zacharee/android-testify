@@ -21,9 +21,6 @@ buildscript {
                         'targetSdk' : 28
                 ]
         ]
-        classpaths = [
-                'testify': "${project.rootDir.path}/Plugin/jar/Testify-Plugin-local.jar",
-        ]
         depends = [
                 'kotlin' : [
                         'gradleplugin': "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}",

@@ -1,6 +1,13 @@
+buildscript {
+    dependencies {
+        classpath files("${project.rootDir.path}/../Plugin/jar/Plugin-local.jar")
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "com.shopify.testify"
 
 android {
     compileSdkVersion 28
