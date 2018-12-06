@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+def VERSION_NAME = "$project.versions.testify"
+
+version = VERSION_NAME
+
+android {
+    compileSdkVersion coreVersions.shopify.compileSdk
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        disable 'InvalidPackage', 'RtlSymmetry', 'RtlHardcoded', 'GoogleAppIndexingWarning', 'ObsoleteLintCustomCheck'
+        abortOnError true
+        warningsAsErrors true
+        textOutput 'stdout'
+        textReport true
+        xmlReport false
+    }
+
+    defaultConfig {
+        minSdkVersion coreVersions.shopify.minSdk
+        targetSdkVersion coreVersions.shopify.targetSdk
+        versionCode 1
+        versionName VERSION_NAME
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    libraryVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (output.outputFile != null && output.outputFile.name.endsWith('.aar')) {
+                outputFileName = "${archivesBaseName}-${version}.aar"
+            }
+        }
+    }
+
+    dependencies {
+
+        api depends.support.test.espresso.core3
+        implementation depends.support.test.runner1
+        implementation depends.kotlin.stdlib7
+        testImplementation depends.mockito.v2
+        testImplementation depends.mockito.kotlin
+    }
+}
+
+//endregion
