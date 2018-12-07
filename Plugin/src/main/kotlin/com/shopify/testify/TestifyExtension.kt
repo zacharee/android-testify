@@ -37,11 +37,15 @@ internal data class TestifySettings(
         var testRunner: String,
         var useSdCard: Boolean,
         var testContextId: String,
-        var testPackageId: String) {
+        var testPackageId: String,
+        var applicationIdSuffix: String) {
 
     fun override(extension: TestifyExtension): TestifySettings {
         if (extension.applicationPackageId?.isNotEmpty() == true) {
             this.applicationPackageId = extension.applicationPackageId!!
+        }
+        if (extension.applicationIdSuffix?.isNotEmpty() == true) {
+            this.applicationIdSuffix = extension.applicationIdSuffix!!
         }
         if (extension.baselineSourceDir?.isNotEmpty() == true) {
             this.baselineSourceDir = extension.baselineSourceDir!!
@@ -68,7 +72,7 @@ internal data class TestifySettings(
             this.testPackageId = extension.testPackageId!!
         }
         if (this.testContextId.isEmpty()) {
-            this.testContextId = this.testPackageId
+            this.testContextId = createTestContextId(this.applicationPackageId, this.applicationIdSuffix)
         }
         return this
     }
@@ -87,6 +91,10 @@ internal data class TestifySettings(
     }
 }
 
+fun createTestContextId(applicationPackageId: String, applicationIdSuffix: String) : String {
+    return if (applicationPackageId.isEmpty()) "" else "$applicationPackageId$applicationIdSuffix"
+}
+
 internal class TestifySettingsFactory {
 
     companion object {
@@ -97,7 +105,8 @@ internal class TestifySettingsFactory {
             val assetsSet = android.sourceSets?.getByName("""androidTest""")?.assets
             val baselineSourceDir = "${assetsSet?.srcDirs?.first()?.path}/screenshots"
             val testRunner = android.defaultConfig.testInstrumentationRunner
-            val testContextId = if (applicationPackageId.isEmpty()) "" else "$applicationPackageId.debug"
+            val applicationIdSuffix = ""
+            val testContextId = createTestContextId(applicationPackageId, applicationIdSuffix)
             val testPackageId = android.testVariants?.first()?.applicationId ?: ""
 
             return TestifySettings(
@@ -109,7 +118,8 @@ internal class TestifySettingsFactory {
                     testRunner = testRunner,
                     useSdCard = false,
                     testContextId = testContextId,
-                    testPackageId = testPackageId
+                    testPackageId = testPackageId,
+                    applicationIdSuffix = applicationIdSuffix
             )
         }
     }
@@ -125,6 +135,7 @@ open class TestifyExtension {
     var useSdCard: Boolean? = null
     var testContextId: String? = null
     var testPackageId: String? = null
+    var applicationIdSuffix: String? = null
 
     companion object {
         const val NAME = "testify"

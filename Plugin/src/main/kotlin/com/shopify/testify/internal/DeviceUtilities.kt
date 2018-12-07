@@ -39,6 +39,9 @@ internal fun Project.listFailedScreenshots(): List<String> {
     val src = getDeviceImageDirectory()
     val dst = getDestinationImageDirectory()
 
+    logger.info("listFailedScreenshots:src: $src")
+    logger.info("listFailedScreenshots:dst: $dst")
+
     val log = Adb()
             .argument("shell ls $src*.png")
             .argument("2>/dev/null")

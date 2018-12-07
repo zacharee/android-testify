@@ -25,7 +25,7 @@ task configureLocal {
 }
 
 task copyLocal(type: Copy) {
-    from "build/libs/Testify-Plugin-local.jar"
+    from "build/libs/${project.name}-local.jar"
     into 'jar'
 }
 
