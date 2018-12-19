@@ -24,7 +24,7 @@ public class RuleLifecycleTest {
 
     private static Stack<String> lifecycleVisits = new Stack<>();
 
-    @Rule public ScreenshotTestRule<TestActivity> rule = new ScreenshotTestRule<>(TestActivity.class);
+    @Rule public ScreenshotRule<TestActivity> rule = new ScreenshotRule<>(TestActivity.class);
     @Rule public ExpectedException thrown = ExpectedException.none();
 
     private static void assertExpectedOrder(int order, String tag) {
@@ -70,7 +70,7 @@ public class RuleLifecycleTest {
         assertExpectedOrder(3, "testMethod3");
 
         thrown.expect(RuntimeException.class);
-        thrown.expectMessage("\n* You must call assertSame on the ScreenshotTestRule *");
+        thrown.expectMessage("\n* You must call assertSame on the ScreenshotRule *");
     }
 
     @UiThreadTest

@@ -1,3 +1,5 @@
+import com.android.ddmlib.DdmPreferences
+
 buildscript {
     repositories {
         jcenter()
@@ -6,7 +8,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-
 apply plugin: 'kotlin-android'
 
 def VERSION_NAME = "$project.versions.testify"
@@ -14,6 +15,8 @@ def VERSION_NAME = "$project.versions.testify"
 version = VERSION_NAME
 
 android {
+    DdmPreferences.setTimeOut(60000) // https://code.google.com/p/android/issues/detail?id=104305
+
     compileSdkVersion coreVersions.shopify.compileSdk
 
     compileOptions {
@@ -22,7 +25,6 @@ android {
     }
 
     lintOptions {
-        disable 'InvalidPackage', 'RtlSymmetry', 'RtlHardcoded', 'GoogleAppIndexingWarning', 'ObsoleteLintCustomCheck'
         abortOnError true
         warningsAsErrors true
         textOutput 'stdout'
@@ -49,6 +51,17 @@ android {
         variant.outputs.all { output ->
             if (output.outputFile != null && output.outputFile.name.endsWith('.aar')) {
                 outputFileName = "${archivesBaseName}-${version}.aar"
+            }
+        }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
             }
         }
     }
