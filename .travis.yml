@@ -8,15 +8,10 @@ android:
   - android-23
   - android-28
   - extra-android-m2repository
-  - sys-img-armeabi-v7a-google_apis-23
 
 script:
-  - echo no | android create avd --force -n Test -t android-23 --abi google_apis/armeabi-v7a
-  - emulator -avd Test -no-skin -no-window &
   - ./gradlew Library:assemble --console=plain
   - ./gradlew Plugin:assemble --console=plain
   - ./gradlew Library:lint --console=plain
   - ./gradlew Plugin:test --console=plain
   - ./gradlew Library:test --console=plain
-  - android-wait-for-emulator >/dev/null 2>&1
-  - ./gradlew Library:connectedDebugAndroidTest --console=plain -Pandroid.testInstrumentationRunnerArguments.notAnnotation=com.shopify.testify.annotation.ScreenshotInstrumentation
