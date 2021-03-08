@@ -56,6 +56,7 @@ android {
         implementation "androidx.test:runner:${versions.androidx.test.runner}"
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
         implementation "com.github.ajalt:colormath:${versions.colormath}"
+        implementation "androidx.core:core-ktx:1.3.2"
 
         testImplementation "org.mockito:mockito-core:${versions.mockito2}"
         testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitokotlin}"
