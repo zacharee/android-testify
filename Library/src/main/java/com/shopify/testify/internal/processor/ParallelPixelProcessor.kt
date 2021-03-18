@@ -67,9 +67,9 @@ class ParallelPixelProcessor private constructor() {
     }
 
 
-    fun transform(transformer: (baselinePixel: Int, currentPixel: Int) -> Int): TransformResult {
-        TODO("Not implemented")
-    }
+//    fun transform(transformer: (baselinePixel: Int, currentPixel: Int) -> Int): TransformResult {
+//        TODO("Not implemented")
+//    }
 
     private data class ImageBuffers(
         val width: Int,
