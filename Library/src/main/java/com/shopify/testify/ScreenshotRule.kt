@@ -73,6 +73,7 @@ import com.shopify.testify.internal.modification.SoftwareRenderViewModification
 import com.shopify.testify.internal.processor.compare.FuzzyCompare
 import com.shopify.testify.internal.processor.compare.RegionCompare
 import com.shopify.testify.internal.processor.compare.SameAsCompare
+import com.shopify.testify.internal.processor.compare.TolerantCompare
 import com.shopify.testify.internal.processor.diff.HighContrastDiff
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -118,6 +119,7 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     private var assertSameInvoked = false
     private var espressoActions: EspressoActions? = null
     private var exactness: Float? = null
+    private var tolerance: Int? = null
     private var fontScale: Float? = null
     private var hideSoftKeyboard = true
     private var isLayoutInspectionModeEnabled = false
@@ -156,6 +158,12 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     fun setExactness(exactness: Float): ScreenshotRule<T> {
         require(exactness in 0.0..1.0)
         this.exactness = exactness
+        return this
+    }
+
+    fun setTolerance(tolerance: Int): ScreenshotRule<T> {
+        require(tolerance in 0..255)
+        this.tolerance = tolerance
         return this
     }
 
@@ -480,6 +488,7 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
                     }
 
                 val bitmapCompare: BitmapCompare = when {
+                    tolerance != null -> TolerantCompare(tolerance!!)::compareBitmaps
                     exclusionRects.isNotEmpty() -> RegionCompare(exclusionRects)::compareBitmaps
                     exactness != null -> FuzzyCompare(exactness!!)::compareBitmaps
                     else -> SameAsCompare()::compareBitmaps

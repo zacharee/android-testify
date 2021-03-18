@@ -24,8 +24,10 @@
 package com.shopify.testify.internal.processor.compare
 
 import android.graphics.Bitmap
+import androidx.annotation.ColorInt
 import com.github.ajalt.colormath.RGB
 import com.shopify.testify.internal.processor.FastPixelProcessor
+import com.shopify.testify.internal.processor.ParallelPixelProcessor
 import com.shopify.testify.internal.processor.compare.colorspace.calculateDeltaE
 
 internal class FuzzyCompare(private val exactness: Float) : BitmapCompare {
@@ -40,6 +42,85 @@ internal class FuzzyCompare(private val exactness: Float) : BitmapCompare {
         }
 
         return FastPixelProcessor
+            .create()
+            .baseline(baselineBitmap)
+            .current(currentBitmap)
+            .analyze { baselinePixel, currentPixel ->
+                if (baselinePixel == currentPixel) {
+                    /* return  */ true
+                } else {
+                    val baselineLab = RGB.fromInt(baselinePixel).toLAB()
+                    val currentLab = RGB.fromInt(currentPixel).toLAB()
+
+                    val deltaE = calculateDeltaE(
+                        baselineLab.l,
+                        baselineLab.a,
+                        baselineLab.b,
+                        currentLab.l,
+                        currentLab.a,
+                        currentLab.b
+                    )
+                    /* return  */ ((100.0 - deltaE) / 100.0f >= exactness)
+                }
+            }
+    }
+}
+
+internal class OldFuzzyCompare(private val exactness: Float) : BitmapCompare {
+
+    override fun compareBitmaps(baselineBitmap: Bitmap, currentBitmap: Bitmap): Boolean {
+        if (baselineBitmap.height != currentBitmap.height) {
+            return false
+        }
+
+        if (baselineBitmap.width != currentBitmap.width) {
+            return false
+        }
+
+        val height = baselineBitmap.height
+        val width = baselineBitmap.width
+
+        for (y in 0 until height) {
+            x@ for (x in 0 until width) {
+                @ColorInt val baselineColor = baselineBitmap.getPixel(x, y)
+                @ColorInt val currentColor = currentBitmap.getPixel(x, y)
+
+                if (baselineColor == currentColor) continue@x
+
+                val baselineLab = RGB.fromInt(baselineColor).toLAB()
+                val currentLab = RGB.fromInt(currentColor).toLAB()
+
+                val deltaE = calculateDeltaE(
+                    baselineLab.l,
+                    baselineLab.a,
+                    baselineLab.b,
+                    currentLab.l,
+                    currentLab.a,
+                    currentLab.b
+                )
+                if ((100.0 - deltaE) / 100.0f < exactness) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+}
+
+internal class ParallelFuzzyCompare(private val exactness: Float) : BitmapCompare {
+
+    override fun compareBitmaps(baselineBitmap: Bitmap, currentBitmap: Bitmap): Boolean {
+        if (baselineBitmap.height != currentBitmap.height) {
+            return false
+        }
+
+        if (baselineBitmap.width != currentBitmap.width) {
+            return false
+        }
+
+        if (baselineBitmap.sameAs(currentBitmap)) return true
+
+        return ParallelPixelProcessor
             .create()
             .baseline(baselineBitmap)
             .current(currentBitmap)

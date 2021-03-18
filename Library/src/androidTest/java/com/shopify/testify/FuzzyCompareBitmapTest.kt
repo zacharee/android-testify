@@ -4,16 +4,21 @@ import android.graphics.Bitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.shopify.testify.internal.processor.compare.FuzzyCompare
+import com.shopify.testify.internal.processor.compare.OldFuzzyCompare
+import com.shopify.testify.internal.processor.compare.ParallelFuzzyCompare
+import com.shopify.testify.internal.processor.compare.SameAsCompare
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class FuzzyCompareBitmapTest {
 
-    @get:Rule var testActivityRule = ActivityTestRule(TestActivity::class.java)
+    @get:Rule
+    var testActivityRule = ActivityTestRule(TestActivity::class.java)
 
     private val screenshotUtility = ScreenshotUtility()
 
@@ -44,4 +49,39 @@ class FuzzyCompareBitmapTest {
          */
         assertTrue(FuzzyCompare(0.975f).compareBitmaps(baselineBitmap, currentBitmap))
     }
+
+    @Test
+    fun benchmark() {
+        val baselineBitmap = loadBitmap("benchmark_baseline")
+        val currentBitmap = loadBitmap("benchmark_current")
+
+        val stock = benchmark {
+            assertTrue(
+                SameAsCompare().compareBitmaps(
+                    baselineBitmap,
+                    baselineBitmap.copy(baselineBitmap.config, false)
+                )
+            )
+        }
+
+        val old = benchmark {
+            assertTrue(OldFuzzyCompare(0.95f).compareBitmaps(baselineBitmap, currentBitmap))
+        }
+
+        val fast = benchmark {
+            assertTrue(FuzzyCompare(0.95f).compareBitmaps(baselineBitmap, currentBitmap))
+        }
+
+        val parallel = benchmark {
+            assertTrue(ParallelFuzzyCompare(0.95f).compareBitmaps(baselineBitmap, currentBitmap))
+        }
+
+        assertTrue("stock:$stock old:$old fast:$fast parallel:$parallel", false)
+    }
+}
+
+fun benchmark(block: () -> Unit): Long {
+    val start = Date().time
+    block()
+    return Date().time - start
 }

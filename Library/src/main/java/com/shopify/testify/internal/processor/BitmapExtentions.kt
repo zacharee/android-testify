@@ -1,6 +1,8 @@
 package com.shopify.testify.internal.processor
 
 import android.graphics.Bitmap
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
 
 fun FastPixelProcessor.TransformResult.createBitmap(): Bitmap {
     return Bitmap.createBitmap(
@@ -11,28 +13,7 @@ fun FastPixelProcessor.TransformResult.createBitmap(): Bitmap {
     )
 }
 
-//suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {
-//    map { async { f(it) } }.awaitAll()
-//}
-
-//val numberOfCores = Runtime.getRuntime().availableProcessors()
-//val executorDispatcher: ExecutorCoroutineDispatcher =
-//    Executors.newFixedThreadPool(numberOfCores ).asCoroutineDispatcher()
-
-
-//inline fun <T, R> Iterable<T>.parallelTransform(
-//    dispatcher: ExecutorDispatcher,
-//    crossinline transform: (T) -> R
-//): Flow<R> = channelFlow {
-//
-//    val items: Iterable<T> = this@parallelTransform
-//    val channelFlowScope: ProducerScope<R> = this@channelFlow
-//
-//    launch(dispatcher) {
-//        items.forEach {item ->
-//            launch {
-//                channelFlowScope.send(transform(item))
-//            }
-//        }
-//    }
-//}
+val numberOfCores by lazy { Runtime.getRuntime().availableProcessors() }
+val executorDispatcher by lazy {
+    Executors.newFixedThreadPool(numberOfCores).asCoroutineDispatcher()
+}
