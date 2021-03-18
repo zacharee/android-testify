@@ -1,10 +1,11 @@
 package com.shopify.testify.internal.processor
 
 import android.graphics.Bitmap
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.awaitAll
 import java.nio.IntBuffer
 import java.util.BitSet
 import kotlin.math.ceil
@@ -41,35 +42,67 @@ class ParallelPixelProcessor private constructor() {
         }
     }
 
-    fun analyze(analyzer: (baselinePixel: Int, currentPixel: Int) -> Boolean): Boolean {
-        val (width, height, baselineBuffer, currentBuffer) = prepareBuffers()
-
+    private fun getChunkData(width: Int, height: Int): ChunkData {
         val size = width * height
         val chunkSize = size / numberOfCores
         val chunks = ceil(size.toFloat() / chunkSize.toFloat()).toInt()
-        val results = BitSet(chunks).apply { set(0, chunks) }
+        return ChunkData(size, chunks, chunkSize)
+    }
 
+    private fun runBlockingInChunks(chunkData: ChunkData, fn: CoroutineScope.(chunk: Int, index: Int) -> Boolean) {
         runBlocking {
             launch(executorDispatcher) {
-                (0 until chunks).map { chunk ->
+                (0 until chunkData.chunks).map { chunk ->
                     async {
-                        for (i in (chunk * chunkSize) until ((chunk + 1) * chunkSize)) {
-                            if (!analyzer(baselineBuffer[i], currentBuffer[i])) {
-                                results.clear(chunk)
-                                break
-                            }
+                        for (i in (chunk * chunkData.chunkSize) until ((chunk + 1) * chunkData.chunkSize)) {
+                            if (!fn(chunk, i)) break
                         }
                     }
                 }.awaitAll()
             }
         }
-        return results.cardinality() == chunks
     }
 
+    fun analyze(analyzer: (baselinePixel: Int, currentPixel: Int) -> Boolean): Boolean {
+        val (width, height, baselineBuffer, currentBuffer) = prepareBuffers()
 
-//    fun transform(transformer: (baselinePixel: Int, currentPixel: Int) -> Int): TransformResult {
-//        TODO("Not implemented")
-//    }
+        val chunkData = getChunkData(width, height)
+        val results = BitSet(chunkData.chunks).apply { set(0, chunkData.chunks) }
+
+        runBlockingInChunks(chunkData) { chunk, index ->
+            if (!analyzer(baselineBuffer[index], currentBuffer[index])) {
+                results.clear(chunk)
+                false
+            } else {
+                true
+            }
+        }
+        return results.cardinality() == chunkData.chunks
+    }
+
+    fun transform(transformer: (baselinePixel: Int, currentPixel: Int) -> Int): TransformResult {
+        val (width, height, baselineBuffer, currentBuffer) = prepareBuffers()
+
+        val chunkData = getChunkData(width, height)
+        val diffBuffer = IntBuffer.allocate(chunkData.size)
+
+        runBlockingInChunks(chunkData) { _, index ->
+            diffBuffer.put(transformer(baselineBuffer[index], currentBuffer[index]))
+            true
+        }
+
+        return TransformResult(
+            width,
+            height,
+            diffBuffer.array()
+        )
+    }
+
+    private data class ChunkData(
+        val size: Int,
+        val chunks: Int,
+        val chunkSize: Int
+    )
 
     private data class ImageBuffers(
         val width: Int,

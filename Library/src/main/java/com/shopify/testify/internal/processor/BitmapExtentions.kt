@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 
-fun FastPixelProcessor.TransformResult.createBitmap(): Bitmap {
+fun ParallelPixelProcessor.TransformResult.createBitmap(): Bitmap {
     return Bitmap.createBitmap(
         this.pixels,
         this.width,

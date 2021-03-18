@@ -1,7 +1,7 @@
 package com.shopify.testify.internal.processor.compare
 
 import android.graphics.Bitmap
-import com.shopify.testify.internal.processor.FastPixelProcessor
+import com.shopify.testify.internal.processor.ParallelPixelProcessor
 import kotlin.math.absoluteValue
 
 class TolerantCompare(private val tolerance: Int) : BitmapCompare {
@@ -15,7 +15,7 @@ class TolerantCompare(private val tolerance: Int) : BitmapCompare {
             return false
         }
 
-        return FastPixelProcessor
+        return ParallelPixelProcessor
             .create()
             .baseline(baselineBitmap)
             .current(currentBitmap)

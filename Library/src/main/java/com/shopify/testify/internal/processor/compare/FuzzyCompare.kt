@@ -26,7 +26,6 @@ package com.shopify.testify.internal.processor.compare
 import android.graphics.Bitmap
 import androidx.annotation.ColorInt
 import com.github.ajalt.colormath.RGB
-import com.shopify.testify.internal.processor.FastPixelProcessor
 import com.shopify.testify.internal.processor.ParallelPixelProcessor
 import com.shopify.testify.internal.processor.compare.colorspace.calculateDeltaE
 
@@ -41,7 +40,7 @@ internal class FuzzyCompare(private val exactness: Float) : BitmapCompare {
             return false
         }
 
-        return FastPixelProcessor
+        return ParallelPixelProcessor
             .create()
             .baseline(baselineBitmap)
             .current(currentBitmap)

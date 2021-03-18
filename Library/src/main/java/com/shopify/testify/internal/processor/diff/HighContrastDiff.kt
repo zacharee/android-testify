@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import com.shopify.testify.ScreenshotUtility
-import com.shopify.testify.internal.processor.FastPixelProcessor
+import com.shopify.testify.internal.processor.ParallelPixelProcessor
 import com.shopify.testify.internal.processor.createBitmap
 
 class HighContrastDiff {
@@ -14,7 +14,7 @@ class HighContrastDiff {
     private lateinit var currentBitmap: Bitmap
 
     fun generate(context: Context) {
-        val transformResult = FastPixelProcessor
+        val transformResult = ParallelPixelProcessor
             .create()
             .baseline(baselineBitmap)
             .current(currentBitmap)
