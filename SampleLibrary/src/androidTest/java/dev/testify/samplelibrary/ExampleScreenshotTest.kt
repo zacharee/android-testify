@@ -11,7 +11,7 @@ class ExampleScreenshotTest {
 
     @ScreenshotInstrumentation
     @Test
-    fun useAppContext() {
+    fun default() {
         screenshotTestRule.assertSame()
     }
 }

@@ -50,6 +50,11 @@ android {
     }
 }
 
+testify {
+    applicationPackageId "dev.testify.samplelibrary.test"
+    testPackageId "dev.testify.samplelibrary.test"
+}
+
 dependencies {
 
     implementation "androidx.core:core-ktx:${versions.androidx.coreKtx}"
