@@ -1,0 +1,68 @@
+buildscript {
+    repositories {
+        google()
+    }
+    dependencies {
+        classpath files("${project.rootDir.path}/Plugins/Gradle/jar/Plugin-local.jar")
+    }
+}
+
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+apply plugin: 'com.shopify.testify'
+
+android {
+    compileSdk 29
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        demo {
+            dimension "version"
+        }
+        full {
+            dimension "version"
+        }
+    }
+}
+
+dependencies {
+
+    implementation "androidx.core:core-ktx:${versions.androidx.coreKtx}"
+    implementation "androidx.appcompat:appcompat:${versions.androidx.appCompat}"
+
+    androidTestImplementation project(":Library")
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:${versions.androidx.test.espresso}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.androidx.test.espresso}"
+    androidTestImplementation "androidx.test.ext:junit:${versions.androidx.test.junit}"
+    androidTestImplementation "androidx.test:rules:${versions.androidx.test.rules}"
+    androidTestImplementation "androidx.test:runner:${versions.androidx.test.runner}"
+    androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
+    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitokotlin}"
+}
