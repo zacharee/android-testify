@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.shopify.testify.ComposableScreenshotRule
 import com.shopify.testify.annotation.ScreenshotInstrumentation
 import com.shopify.testify.sample.ClientListItem
+import com.shopify.testify.sample.DropdownDemo
 import com.shopify.testify.sample.R
 import com.shopify.testify.sample.TopAppBar
 import org.junit.Rule
@@ -126,6 +127,23 @@ class ComposableScreenshotTest {
                         .wrapContentHeight()
                 ) {
                     TopAppBar()
+                }
+            }
+            .assertSame()
+    }
+
+    @ScreenshotInstrumentation
+    @Test
+    fun dropdownMenu() {
+        rule
+            .setCompose {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                        .padding(top = 20.dp)
+                ) {
+                    DropdownDemo(true)
                 }
             }
             .assertSame()
