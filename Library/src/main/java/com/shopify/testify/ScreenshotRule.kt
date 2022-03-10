@@ -103,36 +103,36 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     initialTouchMode: Boolean = false,
     protected val launchActivity: Boolean = true,
     enableReporter: Boolean = false
-) : ActivityTestRule<T>(activityClass, initialTouchMode, launchActivity), TestRule {
+) : ActivityTestRule<T>(activityClass, initialTouchMode, launchActivity), TestRule, ScreenshotConfigurationInterface {
 
     @IdRes protected var rootViewId = rootViewId
         @JvmName("rootViewIdResource") set
 
     @LayoutRes
-    private var targetLayoutId: Int = NO_ID
+    override var targetLayoutId: Int = NO_ID
 
     @Suppress("MemberVisibilityCanBePrivate")
-    open lateinit var testMethodName: String
-    private lateinit var testClass: String
-    private lateinit var testSimpleClassName: String
-    private val hideCursorViewModification = HideCursorViewModification()
-    private val hidePasswordViewModification = HidePasswordViewModification()
-    private val hideScrollbarsViewModification = HideScrollbarsViewModification()
-    private val hideTextSuggestionsViewModification = HideTextSuggestionsViewModification()
-    private val softwareRenderViewModification = SoftwareRenderViewModification()
-    private val focusModification = FocusModification()
-    internal val testContext = getInstrumentation().context
-    private var assertSameInvoked = false
-    private var espressoActions: EspressoActions? = null
-    private var exactness: Float? = null
-    private var fontScale: Float? = null
-    private var hideSoftKeyboard = true
-    private var isLayoutInspectionModeEnabled = false
-    private var locale: Locale? = null
-    private var screenshotViewProvider: ViewProvider? = null
-    private var throwable: Throwable? = null
-    private var viewModification: ViewModification? = null
-    private var extrasProvider: ExtrasProvider? = null
+    override lateinit var testMethodName: String
+    override lateinit var testClass: String
+    override lateinit var testSimpleClassName: String
+    override val hideCursorViewModification = HideCursorViewModification()
+    override val hidePasswordViewModification = HidePasswordViewModification()
+    override val hideScrollbarsViewModification = HideScrollbarsViewModification()
+    override val hideTextSuggestionsViewModification = HideTextSuggestionsViewModification()
+    override val softwareRenderViewModification = SoftwareRenderViewModification()
+    override val focusModification = FocusModification()
+    override val testContext = getInstrumentation().context
+    override var assertSameInvoked = false
+    override var espressoActions: EspressoActions? = null
+    override var exactnessValue: Float? = null
+    override var fontScale: Float? = null
+    override var hideSoftKeyboard = true
+    override var isLayoutInspectionModeEnabled = false
+    override var locale: Locale? = null
+    override var screenshotViewProvider: ViewProvider? = null
+    override var throwable: Throwable? = null
+    override var viewModification: ViewModification? = null
+    override var extrasProvider: ExtrasProvider? = null
 
     @VisibleForTesting
     internal var reporter: Reporter? = null
@@ -171,12 +171,12 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
         get() = testClass
 
     fun getExactness(): Float? {
-        return exactness
+        return exactnessValue
     }
 
     fun setExactness(exactness: Float?): ScreenshotRule<T> {
         require(exactness == null || exactness in 0.0..1.0)
-        this.exactness = exactness
+        this.exactnessValue = exactness
         return this
     }
 
@@ -394,9 +394,9 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     }
 
     private fun applyExactness(description: Description) {
-        if (exactness == null) {
+        if (exactnessValue == null) {
             val bitmapComparison = description.getAnnotation(BitmapComparisonExactness::class.java)
-            exactness = bitmapComparison?.exactness
+            exactnessValue = bitmapComparison?.exactness
         }
     }
 
@@ -540,8 +540,8 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
                     }
 
                 val bitmapCompare: BitmapCompare = when {
-                    exclusionRects.isNotEmpty() || exactness != null -> {
-                        FuzzyCompare(exactness, exclusionRects)::compareBitmaps
+                    exclusionRects.isNotEmpty() || exactnessValue != null -> {
+                        FuzzyCompare(exactnessValue, exclusionRects)::compareBitmaps
                     }
                     else -> SameAsCompare()::compareBitmaps
                 }
@@ -557,7 +557,7 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
                             .name(outputFileName)
                             .baseline(baselineBitmap)
                             .current(currentBitmap)
-                            .exactness(exactness)
+                            .exactness(exactnessValue)
                             .generate(context = activity)
                     }
                     if (isRecordMode()) {
