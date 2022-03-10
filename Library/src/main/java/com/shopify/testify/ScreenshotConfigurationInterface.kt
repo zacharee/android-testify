@@ -1,13 +1,18 @@
 package com.shopify.testify
 
+import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.graphics.Rect
 import androidx.annotation.LayoutRes
+import com.shopify.testify.internal.helpers.OrientationHelper
 import com.shopify.testify.internal.modification.FocusModification
 import com.shopify.testify.internal.modification.HideCursorViewModification
 import com.shopify.testify.internal.modification.HidePasswordViewModification
 import com.shopify.testify.internal.modification.HideScrollbarsViewModification
 import com.shopify.testify.internal.modification.HideTextSuggestionsViewModification
 import com.shopify.testify.internal.modification.SoftwareRenderViewModification
+import com.shopify.testify.report.Reporter
 import java.util.Locale
 
 interface ScreenshotConfigurationInterface {
@@ -33,4 +38,9 @@ interface ScreenshotConfigurationInterface {
     var throwable: Throwable?
     var viewModification: ViewModification?
     var extrasProvider: ExtrasProvider?
+    var reporter: Reporter?
+    var exclusionRectProvider: ExclusionRectProvider?
+    val exclusionRects: HashSet<Rect>
+    var orientationToIgnore: Int
+    var outputFileName: String
 }

@@ -103,46 +103,13 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     initialTouchMode: Boolean = false,
     protected val launchActivity: Boolean = true,
     enableReporter: Boolean = false
-) : ActivityTestRule<T>(activityClass, initialTouchMode, launchActivity), TestRule, ScreenshotConfigurationInterface {
+) : ActivityTestRule<T>(activityClass, initialTouchMode, launchActivity), TestRule, ScreenshotConfigurationInterface by ScreenshotConfiguration() {
 
     @IdRes protected var rootViewId = rootViewId
         @JvmName("rootViewIdResource") set
 
-    @LayoutRes
-    override var targetLayoutId: Int = NO_ID
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    override lateinit var testMethodName: String
-    override lateinit var testClass: String
-    override lateinit var testSimpleClassName: String
-    override val hideCursorViewModification = HideCursorViewModification()
-    override val hidePasswordViewModification = HidePasswordViewModification()
-    override val hideScrollbarsViewModification = HideScrollbarsViewModification()
-    override val hideTextSuggestionsViewModification = HideTextSuggestionsViewModification()
-    override val softwareRenderViewModification = SoftwareRenderViewModification()
-    override val focusModification = FocusModification()
-    override val testContext = getInstrumentation().context
-    override var assertSameInvoked = false
-    override var espressoActions: EspressoActions? = null
-    override var exactnessValue: Float? = null
-    override var fontScale: Float? = null
-    override var hideSoftKeyboard = true
-    override var isLayoutInspectionModeEnabled = false
-    override var locale: Locale? = null
-    override var screenshotViewProvider: ViewProvider? = null
-    override var throwable: Throwable? = null
-    override var viewModification: ViewModification? = null
-    override var extrasProvider: ExtrasProvider? = null
-
-    @VisibleForTesting
-    internal var reporter: Reporter? = null
-        private set
     private var orientationHelper = OrientationHelper(activityClass)
-    private var exclusionRectProvider: ExclusionRectProvider? = null
-    private val exclusionRects = HashSet<Rect>()
-    private var orientationToIgnore: Int = SCREEN_ORIENTATION_UNSPECIFIED
     private val screenshotUtility = ScreenshotUtility()
-    private lateinit var outputFileName: String
 
     init {
         if (enableReporter || TestifyFeatures.Reporter.isEnabled(getInstrumentation().context)) {

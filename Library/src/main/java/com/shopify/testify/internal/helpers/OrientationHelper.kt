@@ -35,7 +35,7 @@ import com.shopify.testify.internal.exception.UnexpectedOrientationException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-internal class OrientationHelper<T : Activity>(
+class OrientationHelper<T : Activity>(
     private val activityClass: Class<T>
 ) {
     var deviceOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED

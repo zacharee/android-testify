@@ -33,7 +33,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-internal open class ReportSession {
+open class ReportSession {
     @VisibleForTesting internal open lateinit var sessionId: String
     @VisibleForTesting internal open var testCount = 0
     @VisibleForTesting internal open var passCount = 0

@@ -43,7 +43,7 @@ import java.io.File
  * To enable, set enableReporter to true when initializing [ScreenshotRule]
  * Or, <meta-data android:name="testify-reporter" android:value="true" /> in the AndroidManifest
  */
-internal open class Reporter(
+open class Reporter(
     private val context: Context,
     private val session: ReportSession,
     private val outputFileUtility: OutputFileUtility
