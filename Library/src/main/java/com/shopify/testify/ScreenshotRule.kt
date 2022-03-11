@@ -30,9 +30,7 @@ import android.app.Instrumentation
 import android.content.Intent
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.os.Bundle
 import android.os.Debug
 import android.os.Looper
@@ -49,6 +47,13 @@ import androidx.test.rule.ActivityTestRule
 import com.shopify.testify.annotation.BitmapComparisonExactness
 import com.shopify.testify.annotation.ScreenshotInstrumentation
 import com.shopify.testify.annotation.TestifyLayout
+import com.shopify.testify.core.EspressoActions
+import com.shopify.testify.core.ExclusionRectProvider
+import com.shopify.testify.core.ExtrasProvider
+import com.shopify.testify.core.ScreenshotConfiguration
+import com.shopify.testify.core.ScreenshotConfigurationInterface
+import com.shopify.testify.core.ViewModification
+import com.shopify.testify.core.ViewProvider
 import com.shopify.testify.internal.DeviceIdentifier
 import com.shopify.testify.internal.DeviceIdentifier.DEFAULT_NAME_FORMAT
 import com.shopify.testify.internal.TestName
@@ -66,12 +71,6 @@ import com.shopify.testify.internal.helpers.OrientationHelper
 import com.shopify.testify.internal.helpers.ResourceWrapper
 import com.shopify.testify.internal.helpers.WrappedFontScale
 import com.shopify.testify.internal.helpers.WrappedLocale
-import com.shopify.testify.internal.modification.FocusModification
-import com.shopify.testify.internal.modification.HideCursorViewModification
-import com.shopify.testify.internal.modification.HidePasswordViewModification
-import com.shopify.testify.internal.modification.HideScrollbarsViewModification
-import com.shopify.testify.internal.modification.HideTextSuggestionsViewModification
-import com.shopify.testify.internal.modification.SoftwareRenderViewModification
 import com.shopify.testify.internal.output.OutputFileUtility
 import com.shopify.testify.internal.processor.compare.FuzzyCompare
 import com.shopify.testify.internal.processor.compare.SameAsCompare
@@ -84,17 +83,11 @@ import org.junit.Assert.assertTrue
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
-import java.util.HashSet
 import java.util.Locale
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-typealias ViewModification = (rootView: ViewGroup) -> Unit
-typealias EspressoActions = () -> Unit
-typealias ViewProvider = (rootView: ViewGroup) -> View
 typealias BitmapCompare = (baselineBitmap: Bitmap, currentBitmap: Bitmap) -> Boolean
-typealias ExtrasProvider = (bundle: Bundle) -> Unit
-typealias ExclusionRectProvider = (rootView: ViewGroup, exclusionRects: MutableSet<Rect>) -> Unit
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
@@ -103,7 +96,9 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     initialTouchMode: Boolean = false,
     protected val launchActivity: Boolean = true,
     enableReporter: Boolean = false
-) : ActivityTestRule<T>(activityClass, initialTouchMode, launchActivity), TestRule, ScreenshotConfigurationInterface by ScreenshotConfiguration() {
+) : ActivityTestRule<T>(activityClass, initialTouchMode, launchActivity),
+    TestRule,
+    ScreenshotConfigurationInterface by ScreenshotConfiguration() {
 
     @IdRes protected var rootViewId = rootViewId
         @JvmName("rootViewIdResource") set
@@ -180,7 +175,7 @@ open class ScreenshotRule<T : Activity> @JvmOverloads constructor(
     /**
      * Allows Testify to deliberately set the keyboard focus to the specified view
      *
-     * @param clearFocus when true, removes focus from all views in the activity
+     * @param enabled when true, removes focus from all views in the activity
      */
     fun setFocusTarget(enabled: Boolean = true, @IdRes focusTargetId: Int = android.R.id.content): ScreenshotRule<T> {
         this.focusModification.isEnabled = enabled
