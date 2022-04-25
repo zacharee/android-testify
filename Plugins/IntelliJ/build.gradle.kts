@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Kotlin support
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+    id("org.jetbrains.kotlin.jvm")
     // gradle-intellij-plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
     id("org.jetbrains.intellij") version "0.4.21"
     // gradle-changelog-plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
@@ -34,7 +34,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("script-runtime"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.21")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -73,7 +73,7 @@ tasks {
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
         pluginDescription(
             closure {
-                File("${project.rootDir.path}/README.md").readText().lines().run {
+                File("${project.projectDir.path}/README.md").readText().lines().run {
                     subList(indexOf("<!-- Plugin description -->") + 1, indexOf("<!-- Plugin description end -->"))
                 }.joinToString("\n").run { markdownToHTML(this) }
             }

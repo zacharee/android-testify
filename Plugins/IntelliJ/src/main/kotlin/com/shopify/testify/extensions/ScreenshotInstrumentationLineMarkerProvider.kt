@@ -31,7 +31,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 // Reference https://github.com/square/dagger-intellij-plugin/blob/master/src/com/squareup/ideaplugin/dagger/InjectionLineMarkerProvider.java
 
@@ -52,7 +52,7 @@ class ScreenshotInstrumentationLineMarkerProvider : LineMarkerProvider {
         if (descriptor?.annotations == null) return null
         val annotation = descriptor?.annotations?.findAnnotation(FqName(SCREENSHOT_INSTRUMENTATION)) ?: return null
 
-        val anchorElement = annotation.source.getPsi() ?: return null
+        val anchorElement = (annotation.source as? PsiSourceElement)?.psi ?: return null
 
         return LineMarkerInfo(
             anchorElement.firstChild,

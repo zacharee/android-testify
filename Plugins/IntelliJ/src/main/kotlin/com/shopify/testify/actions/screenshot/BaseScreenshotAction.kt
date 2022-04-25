@@ -37,6 +37,7 @@ import com.shopify.testify.methodName
 import com.shopify.testify.moduleName
 import com.shopify.testify.testifyClassInvocationPath
 import com.shopify.testify.testifyMethodInvocationPath
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.plugins.gradle.action.GradleExecuteTaskAction
@@ -67,13 +68,13 @@ abstract class BaseScreenshotAction(private val anchorElement: PsiElement) : AnA
             return if (isClass()) (anchorElement as? KtClass)?.name else null
         }
 
-    private fun String.toFullGradleCommand(event: AnActionEvent): String {
+    private fun String.toFullGradleCommand(event: AnActionEvent, project: Project): String {
         val arguments = when (anchorElement) {
             is KtNamedFunction -> anchorElement.testifyMethodInvocationPath
             is KtClass -> anchorElement.testifyClassInvocationPath
             else -> null
         }
-        val command = ":${event.moduleName}:$this"
+        val command = ":${event.moduleName.replaceFirst(Regex("^.*?\\."), "")}:$this"
         return if (arguments != null) "$command -PtestClass=$arguments" else command
     }
 
@@ -90,7 +91,7 @@ abstract class BaseScreenshotAction(private val anchorElement: PsiElement) : AnA
         val executor = RunAnythingAction.EXECUTOR_KEY.getData(dataContext)
 
         val gradleCommand = if (isClass()) classGradleCommand else methodGradleCommand
-        val fullCommandLine = gradleCommand.toFullGradleCommand(event)
+        val fullCommandLine = gradleCommand.toFullGradleCommand(event, project)
         GradleExecuteTaskAction.runGradle(project, executor, workingDirectory, fullCommandLine)
     }
 

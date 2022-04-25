@@ -108,7 +108,7 @@ jobs:
           echo "::set-output name=version::$(./Plugins/IntelliJ/gradlew -p ./Plugins/IntelliJ/ properties --console=plain -q | grep "^version:" | cut -f2- -d ' ')"
           echo "::set-output name=name::$(./Plugins/IntelliJ/gradlew -p ./Plugins/IntelliJ/ properties --console=plain -q | grep "^name:" | cut -f2- -d ' ')"
 
-          CHANGELOG=$(./Plugins/IntelliJ/gradlew -p ./Plugins/IntelliJ/ getChangelog --unreleased --no-header --console=plain -q)
+          CHANGELOG=$(./gradlew getChangelog --unreleased --no-header --console=plain -q)
           CHANGELOG="${CHANGELOG//'%'/'%25'}"
           CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
           CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
@@ -116,7 +116,7 @@ jobs:
 
       # Build artifact using buildPlugin Gradle task
       - name: Build Plugin
-        run: ./Plugins/IntelliJ/gradlew -p ./Plugins/IntelliJ/ buildPlugin
+        run: ./gradlew buildPlugin
 
       # Upload plugin artifact to make it available in the next jobs
       - name: Upload artifact
@@ -148,6 +148,7 @@ jobs:
           ide-versions: |
             ideaIC:2019.3
             ideaIC:2020.1
+            ideaIC:2021.3
 
       # Print the output of the verify step
       - name: Print Logs
