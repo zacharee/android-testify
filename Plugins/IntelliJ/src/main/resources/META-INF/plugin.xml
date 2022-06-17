@@ -12,7 +12,8 @@ However, the current Android Studio support relies fully on the fact that Testif
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>org.jetbrains.kotlin</depends>
-    <depends>com.intellij.modules.androidstudio</depends>
+<!--    <depends>com.intellij.modules.androidstudio</depends>-->
+    <depends>org.jetbrains.android</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider

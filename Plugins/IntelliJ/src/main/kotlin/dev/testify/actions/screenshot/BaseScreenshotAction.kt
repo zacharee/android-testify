@@ -74,7 +74,7 @@ abstract class BaseScreenshotAction(private val anchorElement: PsiElement) : AnA
             is KtClass -> anchorElement.testifyClassInvocationPath
             else -> null
         }
-        val command = ":${event.moduleName}:$this"
+        val command = ":${event.moduleName.replaceFirst(Regex("^.*?\\."), "")}:$this"
         return if (arguments != null) "$command -PtestClass=$arguments" else command
     }
 
